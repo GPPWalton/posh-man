@@ -1,16 +1,16 @@
 pub mod project{
-    enum Cost{
+   pub enum Cost{
         None,
         Low,
         Medium,
         High,
     }
-    enum PaintLevel{
+    pub enum PaintLevel{
         Simple,
         Battle,
         Character,
     }
-    struct Project{
+    pub struct Project{
         project_name: String,
         size: u8,
         cost: Cost,
