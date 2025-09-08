@@ -28,7 +28,7 @@ fn new_file(file_path: Option<&str>)-> Result<File, Box<dyn Error>>{
     Ok(file)
 }
 fn read_file()-> Result<(), Box<dyn Error>>{
-    let filepath = get_first_arg()?;
+    let filepath= OsString::from("project_priorities.csv");
     //if file does not exist, make a new one!
     let file = File::open(&filepath).unwrap_or_else(|error| {
         if error.kind() == ErrorKind::NotFound {
@@ -49,16 +49,29 @@ fn read_file()-> Result<(), Box<dyn Error>>{
     }
     Ok(())
 }
-fn get_first_arg() -> Result<OsString, Box<dyn Error>> {
+//-> Result<OsString, Box<dyn Error>>
+fn get_first_arg() -> Result<(), Box<dyn Error>>  {
+    //maybe change to accept different arguments, display to show project priorities table,
     match env::args_os().nth(1) {
         None => Err(From::from("expected 1 argument, but got none")),
-        Some(file_path) => Ok(file_path),
+        Some(argument )=> {if argument == OsString::from("display") {
+            //run function for displaying csv
+            read_file()
+        }
+        //UNIMPLEMENTED
+        //else if argument == OsString::from("add"){
+            // run function for adding entry to csv
+        //}
+        else{
+            Err(From::from("Invalid argument"))
+        }},
     }
 }
+
 fn main() {
     //TODO: Look at reading CSV and error checking properly again
     let test_project: Project = create_project();
-      if let Err(err) = read_file() {
+      if let Err(err) = get_first_arg() {
         println!("{}", err);
         process::exit(1);
     }
