@@ -49,6 +49,11 @@ fn read_file()-> Result<(), Box<dyn Error>>{
     }
     Ok(())
 }
+fn add_project() -> Result<(), Box<dyn Error>> { //IMPLEMENT: add record to project_priorities.csv
+    Ok(())
+}
+
+
 //-> Result<OsString, Box<dyn Error>>
 fn get_first_arg() -> Result<(), Box<dyn Error>>  {
     //maybe change to accept different arguments, display to show project priorities table,
@@ -59,9 +64,9 @@ fn get_first_arg() -> Result<(), Box<dyn Error>>  {
             read_file()
         }
         //UNIMPLEMENTED
-        //else if argument == OsString::from("add"){
-            // run function for adding entry to csv
-        //}
+        else if argument == OsString::from("add"){
+            add_project()
+        }
         else{
             Err(From::from("Invalid argument"))
         }},
