@@ -7,7 +7,7 @@ use std::io::ErrorKind;
 use std::io::Stdin;
 use std::process;
 use csv::Reader;
-use project::project::create_project;
+use project::project::create_from_existing;
 use project::project::Project;
 use csv;
 
@@ -15,18 +15,15 @@ fn new_file(file_path: Option<&str>)-> Result<File, Box<dyn Error>>{
     //create a File using file_path
     let file = File::create(file_path.unwrap())?;
    let mut wtr = csv::Writer::from_path(file_path.unwrap())?;
-    // Since we're writing records manually, we must explicitly write our
-    // header record. A header record is written the same way that other
-    // records are written.
+    // Add header to file
     wtr.write_record(&["Project","Size","Cost","Whole Army/Warband",
     "Assembly Required","Kitbash rating","Painting level","Complexity rating",
     "Preference modifier","Priority","Status","Is Owned"])?;
 
-    // A CSV writer maintains an internal buffer, so it's important
-    // to flush the buffer when you're done.
     wtr.flush()?;
     Ok(file)
 }
+
 fn read_file()-> Result<(), Box<dyn Error>>{
     let filepath= OsString::from("project_priorities.csv");
     //if file does not exist, make a new one!
@@ -49,6 +46,7 @@ fn read_file()-> Result<(), Box<dyn Error>>{
     }
     Ok(())
 }
+
 fn add_project() -> Result<(), Box<dyn Error>> { //IMPLEMENT: add record to project_priorities.csv
     Ok(())
 }
@@ -74,13 +72,10 @@ fn get_first_arg() -> Result<(), Box<dyn Error>>  {
 }
 
 fn main() {
-    //TODO: Look at reading CSV and error checking properly again
-    let test_project: Project = create_project();
+    //TODO:Parse CSV lines into Struct format
+    // let test_project: Project = create_from_existing();
       if let Err(err) = get_first_arg() {
         println!("{}", err);
         process::exit(1);
     }
-    
-
-
 }
