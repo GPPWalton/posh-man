@@ -1,15 +1,18 @@
 pub mod project{
-   pub enum Cost{
+    #[derive(Debug, serde::Serialize, serde::Deserialize)]
+    pub enum Cost{
         None,
         Low,
         Medium,
         High,
     }
+    #[derive(Debug, serde::Serialize, serde::Deserialize)]
     pub enum PaintLevel{
         Simple,
         Battle,
         Character,
     }
+    #[derive(Debug, serde::Serialize, serde::Deserialize)]
     pub struct Project{
         project_name: String,
         size: u8,
