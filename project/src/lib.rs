@@ -22,21 +22,23 @@ pub mod project{
         status: bool,
 
     }
-    pub fn create_from_existing(project_name: &str, size: u8,
+    pub fn create_from_existing(project_name: String, size: u8,
         cost: Cost, whole_army: bool, needs_assembly: bool,
-        kitibash_rating: u8, paint_level: PaintLevel, priority: f64,
-        status: bool) -> Project{
+        kitbash_rating: u8, paint_level: PaintLevel, priority: f64,
+        status: bool) -> Project{   //create project struct from an existing record
         let test = Project{
-            project_name: project_name.to_string(),
-            size: size,
-            cost: cost,
-            whole_army: whole_army,
-            needs_assembly: needs_assembly,
-            kitbash_rating: kitibash_rating,
-            paint_level: paint_level,
-            priority: priority,
+            project_name,
+            size,
+            cost,
+            whole_army,
+            needs_assembly,
+            kitbash_rating,
+            paint_level,
+            priority, //this should probably call calc_priority?
             status: status,
         };
     return  test;
     }
+    //To do calculate priority using fibonacci storypointing
+    //fn calc_priority, should this be calculated after all projects are generated??
 }

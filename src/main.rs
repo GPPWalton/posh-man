@@ -73,7 +73,7 @@ fn get_first_arg() -> Result<(), Box<dyn Error>>  {
 
 fn main() {
     //TODO:Parse CSV lines into Struct format
-    let test_project: Project = create_project();
+    // let test_project: Project = create_from_existing();
       if let Err(err) = get_first_arg() {
         println!("{}", err);
         process::exit(1);
