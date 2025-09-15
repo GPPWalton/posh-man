@@ -1,18 +1,19 @@
+use serde::{Serialize,Deserialize};
 pub mod project{
-    #[derive(Debug)]
+    #[derive(Debug, Serialize, Deserialize)]
     pub enum Cost{
         None,
         Low,
         Medium,
         High,
     }
-    #[derive(Debug)]
+    #[derive(Debug, Serialize, Deserialize)]
     pub enum PaintLevel{
         Simple,
         Battle,
         Character,
     }
-    #[derive(Debug)]
+    #[derive(Debug, Serialize, Deserialize)]
     pub struct Project{
         project_name: String,
         size: u8,
