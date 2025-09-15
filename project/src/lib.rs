@@ -1,15 +1,18 @@
 pub mod project{
-   pub enum Cost{
+    #[derive(Debug)]
+    pub enum Cost{
         None,
         Low,
         Medium,
         High,
     }
+    #[derive(Debug)]
     pub enum PaintLevel{
         Simple,
         Battle,
         Character,
     }
+    #[derive(Debug)]
     pub struct Project{
         project_name: String,
         size: u8,
