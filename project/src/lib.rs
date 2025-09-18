@@ -38,7 +38,7 @@ pub mod project{
             kitbash_rating,
             paint_level,
             priority, //this should probably call calc_priority?
-            status: status,
+            status,
         };
     return  test;
     }
