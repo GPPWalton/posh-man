@@ -51,15 +51,24 @@ fn add_project() -> Result<(), Box<dyn Error>> { //IMPLEMENT: add record to proj
     Ok(())
 }
 
+fn render_table(data: Vec<Project>, headers: &[&str]) { //TODO: now that vector is returned, figure out how to actually display it as a matrix/grid.
+    //flatten headers into a single string with tabs to space out each element.
+
+    //iterate through each element in data, adding escape characters
+
+    //after this version is done, style it with ASCII characters,
+    //once that is done, change certain row backgrounds based on their status
+    //then add a function to display basic metrics.
+}
+
 fn get_first_arg(headers: &[&str]) -> Result<(), Box<dyn Error>>  {
     //maybe change to accept different arguments, display to show project priorities table,
     match env::args_os().nth(1) {
         None => Err(From::from("expected 1 argument, but got none")),
         Some(argument )=> {if argument == OsString::from("display") {
             //run function for displaying csv
-            //TODO: now that vector is returned, figure out how to actually display it as a matrix/grid.
-            // 1d to 2d array = row * n + col (where matrix has m by n rows by columns)
-            read_file(headers);
+            let data = read_file(headers)?;
+            render_table(data, headers);
             Ok(())
         }
         //UNIMPLEMENTED
