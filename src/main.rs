@@ -12,25 +12,23 @@ use project::project::create_from_existing;
 use project::project::Project;
 use csv;
 
-fn new_file(file_path: Option<&str>)-> Result<File, Box<dyn Error>>{
+fn new_file(file_path: Option<&str>, headers: &[&str])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
     let file = File::create(file_path.unwrap())?;
    let mut wtr = csv::Writer::from_path(file_path.unwrap())?;
     // Add header to file
-    wtr.write_record(&["Project","Size","Cost","Whole Army/Warband",
-    "Assembly Required","Kitbash rating","Painting level","Complexity rating",
-    "Preference modifier","Priority","Status","Is Owned"])?;
+    wtr.write_record(headers)?;
 
     wtr.flush()?;
     Ok(file)
 }
 
-fn read_file()-> Result<(Vec<Project>), Box<dyn Error>>{
+fn read_file(headers: &[&str])-> Result<(Vec<Project>), Box<dyn Error>>{
     let filepath= OsString::from("project_priorities.csv");
     //if file does not exist, make a new one!
     let file = File::open(&filepath).unwrap_or_else(|error| {
         if error.kind() == ErrorKind::NotFound {
-            new_file(filepath.to_str()).unwrap()
+            new_file(filepath.to_str(),headers).unwrap()
             
         } else {
             panic!("Problem opening the file: {error:?}");
@@ -53,16 +51,15 @@ fn add_project() -> Result<(), Box<dyn Error>> { //IMPLEMENT: add record to proj
     Ok(())
 }
 
-
-//-> Result<OsString, Box<dyn Error>>
-fn get_first_arg() -> Result<(), Box<dyn Error>>  {
+fn get_first_arg(headers: &[&str]) -> Result<(), Box<dyn Error>>  {
     //maybe change to accept different arguments, display to show project priorities table,
     match env::args_os().nth(1) {
         None => Err(From::from("expected 1 argument, but got none")),
         Some(argument )=> {if argument == OsString::from("display") {
             //run function for displaying csv
             //TODO: now that vector is returned, figure out how to actually display it as a matrix/grid.
-            read_file();
+            // 1d to 2d array = row * n + col (where matrix has m by n rows by columns)
+            read_file(headers);
             Ok(())
         }
         //UNIMPLEMENTED
@@ -76,8 +73,11 @@ fn get_first_arg() -> Result<(), Box<dyn Error>>  {
 }
 
 fn main() {
+    let headers = ["Project","Size","Cost","Whole Army/Warband",
+    "Assembly Required","Kitbash rating","Painting level","Complexity rating",
+    "Preference modifier","Priority","Status","Is Owned"];
     // let test_project: Project = create_from_existing();
-      if let Err(err) = get_first_arg() {
+      if let Err(err) = get_first_arg(&headers) {
         println!("{}", err);
         process::exit(1);
     }
