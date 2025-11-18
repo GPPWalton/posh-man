@@ -57,7 +57,7 @@ fn render_table(data: Vec<Project>, headers: &[&str]) { //TODO: now that vector 
     let flat_headers: String = headers.iter()
                             .map(|s| format!("{} \t", s))
                             .collect();
-    println!("{}", flat_headers)
+    println!("\u{001b}[37;1m {}", flat_headers)
 
     //iterate through each element in data, adding escape characters
 
