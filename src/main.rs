@@ -55,7 +55,7 @@ fn add_project() -> Result<(), Box<dyn Error>> { //IMPLEMENT: add record to proj
 fn render_table(data: Vec<Project>, headers: &[&str]) { //TODO: now that vector is returned, figure out how to actually display it as a matrix/grid.
     //flatten headers into a single string with tabs to space out each element.
     let flat_headers: String = headers.iter()
-                            .map(|s| format!("{} ", s))
+                            .map(|s| format!("{} \t", s))
                             .collect();
     println!("{}", flat_headers)
 
