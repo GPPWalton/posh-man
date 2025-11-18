@@ -40,7 +40,8 @@ fn read_file(headers: &[&str])-> Result<(Vec<Project>), Box<dyn Error>>{
     for result in rdr.deserialize(){
         let record: Project = result?;
         // Print a debug version of the record.
-        println!("{:?}", &record);
+        //TEMPORARILY COMMENTED
+        // println!("{:?}", &record);
         //add each record to a vector, so it can be returned.
         project_list.push(record);
     }
@@ -54,8 +55,7 @@ fn add_project() -> Result<(), Box<dyn Error>> { //IMPLEMENT: add record to proj
 fn render_table(data: Vec<Project>, headers: &[&str]) { //TODO: now that vector is returned, figure out how to actually display it as a matrix/grid.
     //flatten headers into a single string with tabs to space out each element.
     let flat_headers: String = headers.iter()
-                            .map(|s| s.chars())
-                            .flatten()
+                            .map(|s| format!("{} ", s))
                             .collect();
     println!("{}", flat_headers)
 
@@ -88,8 +88,8 @@ fn get_first_arg(headers: &[&str]) -> Result<(), Box<dyn Error>>  {
 
 fn main() {
     let headers = ["Project","Size","Cost","Whole Army/Warband",
-    "Assembly Required","Kitbash rating","Painting level","Complexity rating",
-    "Preference modifier","Priority","Status","Is Owned"];
+    "Assembly Required","Kitbash Rating","Painting Level","Complexity Rating",
+    "Preference Modifier","Priority","Status","Is Owned"];
     // let test_project: Project = create_from_existing();
       if let Err(err) = get_first_arg(&headers) {
         println!("{}", err);
