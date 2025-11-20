@@ -52,12 +52,18 @@ fn add_project() -> Result<(), Box<dyn Error>> { //IMPLEMENT: add record to proj
     Ok(())
 }
 
-fn render_table(data: Vec<Project>, headers: &[&str]) { //TODO: now that vector is returned, figure out how to actually display it as a matrix/grid.
+fn flatten_headers (headers: &[&str])-> String{
     //flatten headers into a single string with tabs to space out each element.
     let flat_headers: String = headers.iter()
                             .map(|s| format!("{} \t", s))
                             .collect();
-    println!("\u{001b}[37;1m {}", flat_headers)
+    println!("\u{001b}[37;1m {}", flat_headers);
+    flat_headers
+}
+
+fn render_table(data: Vec<Project>, headers: &[&str]) { //TODO: now that vector is returned, figure out how to actually display it as a matrix/grid.
+    //flatten headers
+    let flat_headers =flatten_headers(headers);
 
     //iterate through each element in data, adding escape characters
 
