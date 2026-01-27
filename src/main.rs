@@ -8,6 +8,7 @@ use std::io::Stdin;
 use std::process;
 use std::vec::Vec;
 use csv::Reader;
+use project::project::Cost;
 use project::project::create_from_existing;
 use project::project::Project;
 use csv;
@@ -57,8 +58,22 @@ fn flatten_headers (headers: &[&str])-> String{
     let flat_headers: String = headers.iter()
                             .map(|s| format!("{} \t", s))
                             .collect();
-    println!("\u{001b}[37;1m {}", flat_headers);
+    println!("\u{001b}[37;1m {} \x1B[22m", flat_headers);
     flat_headers
+}
+fn render_row(row: &Project) -> String{
+    //take project and render it as a string, 
+    //TODO: is there more efficient way?
+    let out = row.project_name.to_owned() + "\t" + 
+                    &row.size.to_string() + "\t"  +
+                    row.cost.as_str() + "\t" +
+                    &row.whole_army.to_string() + "\t" +
+                    &row.needs_assembly.to_string()  + "\t" +
+                    &row.kitbash_rating.to_string()  + "\t" +
+                    row.paint_level.as_str()  + "\t" +
+                    &row.priority.to_string()  + "\t" +
+                    &row.status.to_string() + "\n";
+    out
 }
 
 fn render_table(data: Vec<Project>, headers: &[&str]) { //TODO: now that vector is returned, figure out how to actually display it as a matrix/grid.
@@ -66,7 +81,12 @@ fn render_table(data: Vec<Project>, headers: &[&str]) { //TODO: now that vector 
     let flat_headers =flatten_headers(headers);
 
     //iterate through each element in data, adding escape characters
-
+    let table: Vec<String> = data.iter()
+            .map(|s| render_row(s))
+            .collect();
+    for line in table {
+        println!("{}", line);
+    }
     //after this version is done, style it with ASCII characters,
     //once that is done, change certain row backgrounds based on their status
     //then add a function to display basic metrics.
