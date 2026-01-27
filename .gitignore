@@ -1,1 +1,3 @@
 /target
+#ignore local input files
+*.csv
