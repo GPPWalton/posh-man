@@ -1,15 +1,10 @@
 use std::env;
 use std::error::Error;
 use std::ffi::OsString;
-use std::io;
 use std::fs::File;
 use std::io::ErrorKind;
-use std::io::Stdin;
 use std::process;
 use std::vec::Vec;
-use csv::Reader;
-use project::project::Cost;
-use project::project::create_from_existing;
 use project::project::Project;
 use csv;
 
@@ -64,6 +59,8 @@ fn flatten_headers (headers: &[&str])-> String{
 fn render_row(row: &Project) -> String{
     //take project and render it as a string, 
     //TODO: is there more efficient way?
+    //TODO: Find a way to format better: base  max 'column' size on the longest entry and min on header size.
+    // perhaps wrap the cells too?
     let out = row.project_name.to_owned() + "\t" + 
                     &row.size.to_string() + "\t"  +
                     row.cost.as_str() + "\t" +
@@ -76,7 +73,7 @@ fn render_row(row: &Project) -> String{
     out
 }
 
-fn render_table(data: Vec<Project>, headers: &[&str]) { //TODO: now that vector is returned, figure out how to actually display it as a matrix/grid.
+fn render_table(data: Vec<Project>, headers: &[&str]) {
     //flatten headers
     let flat_headers =flatten_headers(headers);
 
