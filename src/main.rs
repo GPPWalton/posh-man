@@ -7,7 +7,9 @@ use std::process;
 use std::vec::Vec;
 use project::project::Project;
 use csv;
-use::tabled::{Table};
+use tabled::{Table};
+use tabled::settings::{Style, Modify, object::Rows,
+    Format, object::Columns,Width, Alignment};
 
 fn new_file(file_path: Option<&str>, headers: [&str; 12])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
@@ -20,7 +22,7 @@ fn new_file(file_path: Option<&str>, headers: [&str; 12])-> Result<File, Box<dyn
     Ok(file)
 }
 
-fn read_file()-> Result<(Vec<Project>), Box<dyn Error>>{
+fn read_file()-> Result<Vec<Project>, Box<dyn Error>>{
     let filepath= OsString::from("project_priorities.csv");
 
     let headers = ["Project","Size","Cost","Whole Army/Warband",
@@ -41,9 +43,6 @@ fn read_file()-> Result<(Vec<Project>), Box<dyn Error>>{
 
     for result in rdr.deserialize(){
         let record: Project = result?;
-        // Print a debug version of the record.
-        //TEMPORARILY COMMENTED
-        // println!("{:?}", &record);
         //add each record to a vector, so it can be returned.
         project_list.push(record);
     }
@@ -54,14 +53,30 @@ fn add_project() -> Result<(), Box<dyn Error>> { //IMPLEMENT: add record to proj
     Ok(())
 }
 
+fn generate_table (data: Vec<Project>) -> Table {
+    let styling = Style::modern();
+    let mut table = Table::new(data);
+    table.with(styling)
+            .with(Modify::new(Rows::first())
+            //Bold the header row.
+                .with(Format::content(
+                    |s| format!("\u{001b}[37;1m {} \x1B[22m", s))))
+            //wrap project name column if greater than 13 chars long
+            .with(Modify::new(Columns::first()
+                ).with(Width::wrap(13)))
+            //center column contents
+            .with(Modify::new(Columns::new(0..)).with(Alignment::center()));
+    table
+}
+
 fn render_table(data: Vec<Project>) {
     //iterate through each element in data, adding escape characters
-    let table = Table::new(data);
+    let table = generate_table(data);
 
     println!("{}", table.to_string());
-    //after this version is done, style it with ASCII characters,
     //once that is done, change certain row backgrounds based on their status
     //then add a function to display basic metrics.
+    //create add_entry button / ctrl+A type commands?
 }
 
 fn get_first_arg() -> Result<(), Box<dyn Error>>  {
@@ -85,7 +100,6 @@ fn get_first_arg() -> Result<(), Box<dyn Error>>  {
 }
 
 fn main() {
-    // let test_project: Project = create_from_existing();
       if let Err(err) = get_first_arg() {
         println!("{}", err);
         process::exit(1);
