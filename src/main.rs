@@ -8,7 +8,7 @@ use std::vec::Vec;
 use project::project::Project;
 use csv;
 use tabled::{Table};
-use tabled::settings::{Style};
+use tabled::settings::{Style, Modify, object::Rows, Format};
 
 fn new_file(file_path: Option<&str>, headers: [&str; 12])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
@@ -21,7 +21,7 @@ fn new_file(file_path: Option<&str>, headers: [&str; 12])-> Result<File, Box<dyn
     Ok(file)
 }
 
-fn read_file()-> Result<(Vec<Project>), Box<dyn Error>>{
+fn read_file()-> Result<Vec<Project>, Box<dyn Error>>{
     let filepath= OsString::from("project_priorities.csv");
 
     let headers = ["Project","Size","Cost","Whole Army/Warband",
@@ -58,7 +58,10 @@ fn add_project() -> Result<(), Box<dyn Error>> { //IMPLEMENT: add record to proj
 fn generate_table (data: Vec<Project>) -> Table {
     let styling = Style::modern();
     let mut table = Table::new(data);
-    table.with(styling);
+    table.with(styling)
+            .with(Modify::new(Rows::new(0..1))
+            //Bold the header row.
+            .with(Format::content(|s| format!("\u{001b}[37;1m {} \x1B[22m", s))));
     table
 }
 
