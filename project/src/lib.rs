@@ -1,4 +1,6 @@
 pub mod project{
+    use tabled::{Tabled};
+    use std::fmt;
     #[derive(Debug, serde::Serialize, serde::Deserialize)]
     pub enum Cost{
         None,
@@ -14,6 +16,11 @@ pub mod project{
                 Self::Medium => return "Medium",
                 Self::High => return "High",
             }
+        }
+    }
+    impl fmt::Display for Cost {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "{}", self.as_str())
         }
     }
     #[derive(Debug, serde::Serialize, serde::Deserialize)]
@@ -32,7 +39,16 @@ pub mod project{
             }
         }
     }
-    #[derive(Debug, serde::Serialize, serde::Deserialize)]
+
+    //Resolve this duplication?
+    impl fmt::Display for PaintLevel {
+        fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+            write!(f, "{}", self.as_str())
+        }
+    }
+
+    #[derive(Debug, serde::Serialize, serde::Deserialize, Tabled)]
+    #[tabled(rename_all = "Upper Title Case")]
     pub struct Project{
         pub project_name: String,
         pub size: u8,
