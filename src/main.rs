@@ -7,7 +7,8 @@ use std::process;
 use std::vec::Vec;
 use project::project::Project;
 use csv;
-use::tabled::{Table};
+use tabled::{Table};
+use tabled::settings::{Style};
 
 fn new_file(file_path: Option<&str>, headers: [&str; 12])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
@@ -54,14 +55,22 @@ fn add_project() -> Result<(), Box<dyn Error>> { //IMPLEMENT: add record to proj
     Ok(())
 }
 
+fn generate_table (data: Vec<Project>) -> Table {
+    let styling = Style::modern();
+    let mut table = Table::new(data);
+    table.with(styling);
+    table
+}
+
 fn render_table(data: Vec<Project>) {
     //iterate through each element in data, adding escape characters
-    let table = Table::new(data);
+    let table = generate_table(data);
 
     println!("{}", table.to_string());
-    //after this version is done, style it with ASCII characters,
+    //make it so table can be scrolled through vertically and horizontally, instead of wrapping
     //once that is done, change certain row backgrounds based on their status
     //then add a function to display basic metrics.
+    //create add_entry button / ctrl+A type commands?
 }
 
 fn get_first_arg() -> Result<(), Box<dyn Error>>  {
