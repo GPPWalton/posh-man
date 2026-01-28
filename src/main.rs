@@ -7,6 +7,7 @@ use std::process;
 use std::vec::Vec;
 use project::project::Project;
 use csv;
+use::tabled::{Table};
 
 fn new_file(file_path: Option<&str>, headers: &[&str])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
@@ -56,34 +57,16 @@ fn flatten_headers (headers: &[&str])-> String{
     println!("\u{001b}[37;1m {} \x1B[22m", flat_headers);
     flat_headers
 }
-fn render_row(row: &Project) -> String{
-    //take project and render it as a string, 
-    //TODO: is there more efficient way?
-    //TODO: Find a way to format better: base  max 'column' size on the longest entry and min on header size.
-    // perhaps wrap the cells too?
-    let out = row.project_name.to_owned() + "\t" + 
-                    &row.size.to_string() + "\t"  +
-                    row.cost.as_str() + "\t" +
-                    &row.whole_army.to_string() + "\t" +
-                    &row.needs_assembly.to_string()  + "\t" +
-                    &row.kitbash_rating.to_string()  + "\t" +
-                    row.paint_level.as_str()  + "\t" +
-                    &row.priority.to_string()  + "\t" +
-                    &row.status.to_string() + "\n";
-    out
-}
+
 
 fn render_table(data: Vec<Project>, headers: &[&str]) {
     //flatten headers
     let flat_headers =flatten_headers(headers);
 
     //iterate through each element in data, adding escape characters
-    let table: Vec<String> = data.iter()
-            .map(|s| render_row(s))
-            .collect();
-    for line in table {
-        println!("{}", line);
-    }
+    let table = Table::new(data);
+
+    println!("{}", table.to_string());
     //after this version is done, style it with ASCII characters,
     //once that is done, change certain row backgrounds based on their status
     //then add a function to display basic metrics.
