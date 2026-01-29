@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 csv = "1.3.1"
 project = {path = "../project_priorities/project"}
-tabled = "0.20.0"
+tabled = {version = "0.20.0", features= ["ansi"]}

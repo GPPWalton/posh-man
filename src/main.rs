@@ -8,7 +8,8 @@ use std::vec::Vec;
 use project::project::Project;
 use csv;
 use tabled::{Table};
-use tabled::settings::{Style, Modify, object::Rows, Format};
+use tabled::settings::{Style, Modify, object::Rows,
+    Format, object::Columns,Width};
 
 fn new_file(file_path: Option<&str>, headers: [&str; 12])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
@@ -59,9 +60,13 @@ fn generate_table (data: Vec<Project>) -> Table {
     let styling = Style::modern();
     let mut table = Table::new(data);
     table.with(styling)
-            .with(Modify::new(Rows::new(0..1))
+            .with(Modify::new(Rows::first())
             //Bold the header row.
-            .with(Format::content(|s| format!("\u{001b}[37;1m {} \x1B[22m", s))));
+                .with(Format::content(
+                    |s| format!("\u{001b}[37;1m {} \x1B[22m", s))))
+            //wrap project name column if greater than 13 chars long
+            .with(Modify::new(Columns::first()
+                ).with(Width::wrap(13)));
     table
 }
 
