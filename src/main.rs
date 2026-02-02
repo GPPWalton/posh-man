@@ -9,7 +9,8 @@ use project::project::Project;
 use csv;
 use tabled::{Table};
 use tabled::settings::{Style, Modify, object::Rows,
-    Format, object::Columns,Width, Alignment};
+    Format, object::Columns,Width, Alignment,
+    themes::Colorization, Color};
 
 fn new_file(file_path: Option<&str>, headers: [&str; 12])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
@@ -99,6 +100,9 @@ fn get_first_arg() -> Result<(), Box<dyn Error>>  {
     }
 }
 
+fn keypress_listener(){
+    //handle keypresses up, down. later,add enter and individual entry changes.
+}
 fn main() {
       if let Err(err) = get_first_arg() {
         println!("{}", err);
