@@ -11,6 +11,7 @@ use tabled::{Table};
 use tabled::settings::{Style, Modify, object::Rows,
     Format, object::Columns,Width, Alignment,
     themes::Colorization, Color};
+use rdev::{listen, Event};
 
 fn new_file(file_path: Option<&str>, headers: [&str; 12])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
@@ -102,9 +103,17 @@ fn get_first_arg() -> Result<(), Box<dyn Error>>  {
 
 fn keypress_listener(){
     //handle keypresses up, down. later,add enter and individual entry changes.
+    //KeyPress(UpArrow), KeyPress(DownArrow), KeyPress(Return)
+    if let Err(e) = listen(|event: Event| {
+        if let Some(name) = event.name {
+            println!("Key pressed: {}", name);
+        }
+    }) {
+        eprintln!("Error: {:?}", e);
+    }
 }
 fn main() {
-      if let Err(err) = get_first_arg() {
+    if let Err(err) = get_first_arg() {
         println!("{}", err);
         process::exit(1);
     }
