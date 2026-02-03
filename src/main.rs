@@ -11,7 +11,7 @@ use tabled::{Table};
 use tabled::settings::{Style, Modify, object::Rows,
     Format, object::Columns,Width, Alignment,
     themes::Colorization, Color};
-use rdev::{listen, Event};
+use rdev::{Event, EventType, listen,Key};
 
 fn new_file(file_path: Option<&str>, headers: [&str; 12])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
@@ -76,6 +76,9 @@ fn render_table(data: Vec<Project>) {
     let table = generate_table(data);
 
     println!("{}", table.to_string());
+    if let Err(error) = listen(keypress_listener) {
+        println!("Error: {:?}", error)
+    }
     //once that is done, change certain row backgrounds based on their status
     //then add a function to display basic metrics.
     //create add_entry button / ctrl+A type commands?
@@ -101,18 +104,32 @@ fn get_first_arg() -> Result<(), Box<dyn Error>>  {
     }
 }
 
-fn keypress_listener(){
+fn keypress_listener(event: Event){
     //handle keypresses up, down. later,add enter and individual entry changes.
     //KeyPress(UpArrow), KeyPress(DownArrow), KeyPress(Return)
-    if let Err(e) = listen(|event: Event| {
-        if let Some(name) = event.name {
-            println!("Key pressed: {}", name);
-        }
-    }) {
-        eprintln!("Error: {:?}", e);
+    //use if instead, or match and a custom enum/struct?
+    //this is what I need:cevent.event_type
+    if event.event_type == EventType::KeyPress(Key::UpArrow){
+        //move cursor up
+        //increment cursor pos
+        //change highlighted row
+        println!("Up");
+
+    }
+    else if event.event_type == EventType::KeyPress(Key::DownArrow){
+        //move cursor down
+        //decrement cursor pos,
+        //change highlighted row
+        //do this and above as one function.
+        println!("Down");
+    }
+    else if event.event_type == EventType::KeyPress(Key::Return){
+        //select row, change colour for now
+        println!("Enter");
     }
 }
 fn main() {
+    let mut cursor_pos: usize = 0;
     if let Err(err) = get_first_arg() {
         println!("{}", err);
         process::exit(1);
