@@ -6,7 +6,10 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+crossterm = "0.29.0"
 csv = "1.3.1"
 project = {path = "../project_priorities/project"}
+ratatui = "0.30.0"
 rdev = "0.5.3"
 tabled = {version = "0.20.0", features= ["ansi"]}
+unicode-width = "0.2.2"
