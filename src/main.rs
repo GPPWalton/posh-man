@@ -9,9 +9,11 @@ use project::project::Project;
 use csv;
 use tabled::{Table};
 use tabled::settings::{Style, Modify, object::Rows,
-    Format, object::Columns,Width, Alignment,
-    themes::Colorization, Color};
-use rdev::{Event, EventType, listen,Key};
+    Format, object::Columns,Width, Alignment,};
+mod app;
+use crate::{
+    app::{App}
+};
 
 fn new_file(file_path: Option<&str>, headers: [&str; 12])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
@@ -42,7 +44,6 @@ fn read_file()-> Result<Vec<Project>, Box<dyn Error>>{
     });
     let mut rdr = csv::Reader::from_reader(file);
     let mut project_list: Vec<Project> = Vec::new();
-
     for result in rdr.deserialize(){
         let record: Project = result?;
         //add each record to a vector, so it can be returned.
@@ -76,23 +77,22 @@ fn render_table(data: Vec<Project>) {
     let table = generate_table(data);
 
     println!("{}", table.to_string());
-    if let Err(error) = listen(keypress_listener) {
-        println!("Error: {:?}", error)
-    }
-    //once that is done, change certain row backgrounds based on their status
-    //then add a function to display basic metrics.
-    //create add_entry button / ctrl+A type commands?
-}
 
-fn get_first_arg() -> Result<(), Box<dyn Error>>  {
+    //once that is done, change certain row backgrounds based on their status
+    //then add afunction to display basic metrics.
+    //create add_entry button / ctrl+A type commands?
+} 
+
+fn get_first_arg() -> Result<(), Box<dyn Error>> {
     //maybe change to accept different arguments, display to show project priorities table,
     match env::args_os().nth(1) {
         None => Err(From::from("expected 1 argument, but got none")),
         Some(argument )=> {if argument == OsString::from("display") {
             //run function for displaying csv
             let data = read_file()?;
-            render_table(data);
-            Ok(())
+
+            Ok(ratatui::run(|terminal| App::new(data).run(terminal))?)
+
         }
         //UNIMPLEMENTED
         else if argument == OsString::from("add"){
@@ -104,34 +104,9 @@ fn get_first_arg() -> Result<(), Box<dyn Error>>  {
     }
 }
 
-fn keypress_listener(event: Event){
-    //handle keypresses up, down. later,add enter and individual entry changes.
-    //KeyPress(UpArrow), KeyPress(DownArrow), KeyPress(Return)
-    //use if instead, or match and a custom enum/struct?
-    //this is what I need:cevent.event_type
-    if event.event_type == EventType::KeyPress(Key::UpArrow){
-        //move cursor up
-        //increment cursor pos
-        //change highlighted row
-        println!("Up");
-
-    }
-    else if event.event_type == EventType::KeyPress(Key::DownArrow){
-        //move cursor down
-        //decrement cursor pos,
-        //change highlighted row
-        //do this and above as one function.
-        println!("Down");
-    }
-    else if event.event_type == EventType::KeyPress(Key::Return){
-        //select row, change colour for now
-        println!("Enter");
-    }
-}
-fn main() {
-    let mut cursor_pos: usize = 0;
+fn main(){
     if let Err(err) = get_first_arg() {
         println!("{}", err);
         process::exit(1);
-    }
+    }    
 }

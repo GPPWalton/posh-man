@@ -1,7 +1,7 @@
 pub mod project{
     use tabled::{Tabled};
-    use std::fmt;
-    #[derive(Debug, serde::Serialize, serde::Deserialize)]
+    use std::{fmt, vec};
+    #[derive(Debug, serde::Serialize, serde::Deserialize,Copy,Clone)]
     pub enum Cost{
         None,
         Low,
@@ -9,21 +9,21 @@ pub mod project{
         High,        
     }
     impl Cost {
-         pub fn as_str(&self)-> &str{
+         pub fn to_string(&self)->String{
             match self {
-                Self::None => return "None",
-                Self::Low => return "Low",
-                Self::Medium => return "Medium",
-                Self::High => return "High",
+                Self::None => return String::from("None"),
+                Self::Low => return String::from("Low"),
+                Self::Medium => return String::from("Medium"),
+                Self::High => return String::from("High"),
             }
         }
     }
     impl fmt::Display for Cost {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-            write!(f, "{}", self.as_str())
+            write!(f, "{}", self.to_string())
         }
     }
-    #[derive(Debug, serde::Serialize, serde::Deserialize)]
+    #[derive(Debug, serde::Serialize, serde::Deserialize,Copy,Clone)]
     pub enum PaintLevel{
         Simple,
         Battle,
@@ -31,11 +31,11 @@ pub mod project{
     }
     //TODO: perhaps condense this and the one for Cost into a single function?
     impl PaintLevel {
-        pub fn as_str(&self) -> &str {
+        pub fn to_string(&self) -> String {
             match self {
-                Self::Simple => return "Simple",
-                Self::Battle => return  "Battle",
-                Self::Character => return  "Character"
+                Self::Simple => return String::from("Simple"),
+                Self::Battle => return  String::from("Battle"),
+                Self::Character => return  String::from("Character")
             }
         }
     }
@@ -43,40 +43,52 @@ pub mod project{
     //Resolve this duplication?
     impl fmt::Display for PaintLevel {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-            write!(f, "{}", self.as_str())
+            write!(f, "{}", self.to_string())
         }
     }
 
     #[derive(Debug, serde::Serialize, serde::Deserialize, Tabled)]
     #[tabled(rename_all = "Upper Title Case")]
     pub struct Project{
-        pub project_name: String,
-        pub size: u8,
-        pub cost: Cost,
-        pub whole_army: bool,
-        pub needs_assembly: bool,
-        pub kitbash_rating: u8,
-        pub paint_level: PaintLevel,
-        pub priority: f64,
-        pub status: bool,
+        project_name: String,
+        size: u8,
+        cost: Cost,
+        whole_army: bool,
+        needs_assembly: bool,
+        kitbash_rating: u8,
+        paint_level: PaintLevel,
+        priority: f64,
+        status: bool,
 
     }
-    pub fn create_from_existing(project_name: String, size: u8,
-        cost: Cost, whole_army: bool, needs_assembly: bool,
-        kitbash_rating: u8, paint_level: PaintLevel, priority: f64,
-        status: bool) -> Project{   //create project struct from an existing record
-        let test = Project{
-            project_name,
-            size,
-            cost,
-            whole_army,
-            needs_assembly,
-            kitbash_rating,
-            paint_level,
-            priority, //this should probably call calc_priority?
-            status,
-        };
-    return  test;
+    impl Project {
+
+        pub fn new (project_name: String,size: u8,cost: Cost,
+            whole_army: bool,needs_assembly: bool,kitbash_rating: u8,
+            paint_level: PaintLevel,priority: f64, status: bool) -> Project {
+            Project
+            {
+                project_name: project_name,
+                size: size,
+                cost: cost,
+                whole_army: whole_army,
+                needs_assembly: needs_assembly,
+                kitbash_rating: kitbash_rating,
+                paint_level: paint_level,
+                priority: priority,
+                status: status
+            }
+        }
+        //get methods - 
+        pub fn project_name (&self) -> String{self.project_name.clone()} 
+        pub fn size (&self)-> u8 {self.size}
+        pub fn cost (&self)-> Cost {self.cost}
+        pub fn whole_army (&self)-> bool {self.whole_army}
+        pub fn needs_assembly (&self)-> bool {self.needs_assembly}
+        pub fn kitbash_rating (&self)-> u8 {self.kitbash_rating}
+        pub fn paint_level (&self)-> PaintLevel {self.paint_level}
+        pub fn priority (&self)-> f64 {self.priority}
+        pub fn status (&self)-> bool {self.status}
     }
     //To do calculate priority using fibonacci storypointing
     //fn calc_priority, should this be calculated after all projects are generated??
