@@ -80,7 +80,6 @@ impl App {
     pub fn new(data: Vec<Project>) -> App {
         App {
             table_state: TableState::default(),
-            row_pos: 0,
             longest_item_lens: Self::constraint_len_calculator(&data),
             data: data,
             exit: false,
@@ -242,14 +241,12 @@ impl App {
             None => 0,
         };
 
-        println!("index is upward {}",&i);
         self.table_state.select(Some(i));
         self.scroll_state = self.scroll_state.position(i * ITEM_HEIGHT);
     }
 
     pub fn move_down(&mut self){
         //wrap around to top  
-        //TODO: Header seems to be overwriten by next row, probably okat but could be resol
         let i = match self.table_state.selected() {
             Some(i) =>{
                 if i ==  (self.data.len()-1) {
@@ -261,7 +258,6 @@ impl App {
             None => 0,
         };
 
-        println!("index is downward {}",&i);
         self.table_state.select(Some(i));
         self.scroll_state = self.scroll_state.position(i * ITEM_HEIGHT);
         }
