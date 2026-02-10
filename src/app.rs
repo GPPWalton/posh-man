@@ -1,15 +1,13 @@
 
 use std::io;
 
-use project::project::Project;
+use project::project::{Cost,Project,PaintLevel};
 use crossterm::event::{self, Event as crossEvent, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
     layout::Constraint,
-    buffer::Buffer,
     layout::{Layout, Rect,Margin},
     style::{Style, Stylize, Modifier,palette::tailwind, Color},
-    symbols::border,
-    text::{Line, Text},
+    text::{Text},
     widgets::{Block, Paragraph,BorderType, Table,
         TableState, Row, Cell,
         ScrollbarState, HighlightSpacing,
@@ -231,12 +229,11 @@ impl App {
         self.exit = true;
     }
 
-    fn move_up(&mut self){
+    pub fn move_up(&mut self){
         //wrap around to bottom
-        //max based on data length, ignoring header and factoring in index of 0
         let i = match self.table_state.selected() {
             Some(i) =>{
-                if self.row_pos ==  0 {
+                if i ==  0 {
                     self.data.len() -1
                 }
                 else{
@@ -245,15 +242,18 @@ impl App {
             }
             None => 0,
         };
-            self.table_state.select(Some(i));
-            self.scroll_state = self.scroll_state.position(i * ITEM_HEIGHT);
+
+        println!("index is upward {}",&i);
+        self.table_state.select(Some(i));
+        self.scroll_state = self.scroll_state.position(i * ITEM_HEIGHT);
     }
 
-    fn move_down(&mut self){
+    pub fn move_down(&mut self){
         //wrap around to top  
+        //TODO: Header seems to be overwriten by next row, probably okat but could be resol
         let i = match self.table_state.selected() {
             Some(i) =>{
-                if self.row_pos ==  self.data.len() -1 {
+                if i ==  (self.data.len()-1) {
                     0
                 }
                 else{
@@ -261,21 +261,15 @@ impl App {
                 }}
             None => 0,
         };
-            self.table_state.select(Some(i));
-            self.scroll_state = self.scroll_state.position(i * ITEM_HEIGHT);
+
+        println!("index is downward {}",&i);
+        self.table_state.select(Some(i));
+        self.scroll_state = self.scroll_state.position(i * ITEM_HEIGHT);
         }
 
     fn select_entry(&mut self){
+        //TODO: implement properly later
         self.color_index = (self.color_index + 1) % PALETTES.len();
-    }
-
-    pub fn next_color(&mut self) {
-        self.color_index = (self.color_index + 1) % PALETTES.len();
-    }
-
-    pub fn previous_color(&mut self) {
-        let count = PALETTES.len();
-        self.color_index = (self.color_index + count - 1) % count;
     }
 
     pub fn set_colors(&mut self) {
@@ -283,11 +277,11 @@ impl App {
     }
 
     fn constraint_len_calculator(items: &Vec<Project>) -> (u16, u16, u16,u16, u16, u16,u16, u16, u16) {
-    //TODO: simplify this as each one is the same before pushing
+    //TODO: simplify this as each one is the same.
     let project_name_len = items
         .iter()
-        .map(|x| x.project_name())
-        .map(|x| UnicodeWidthStr::width(x))
+        .map(|x| x.project_name().to_string())
+        .map(|x| UnicodeWidthStr::width(x.as_str()))
         .max()
         .unwrap_or(0);
     let size_len = items
@@ -339,10 +333,52 @@ impl App {
         .max()
         .unwrap_or(0);
 
-    // #[allow(clippy::cast_possible_truncation)]
     (project_name_len as u16, size_len as u16, cost_len as u16,
     whole_army_len as u16, needs_assembly_len as u16, kitbash_rating_len as u16,
     paint_level_len as u16, priority_len as u16, status_len as u16)
-    // (name_len as u16, address_len as u16, email_len as u16)
 }
+}
+
+#[cfg(test)]
+
+mod tests {
+    use super::*;
+    #[test]
+    fn up_test() {
+        let mut test_projects = vec![];
+
+        for i in 0..29 {
+            test_projects.push(Project::new(String::from("Dangle No. ".to_owned() + &i.to_string() ), 1,Cost::None,true,false,4,PaintLevel::Character,1.0f64,false));
+        }
+        let test_len = &test_projects.len()-1;
+        let mut test_app = App::new(test_projects);
+        for i in 2..0 {
+            test_app.move_up();
+            if i != 0{
+                assert_eq!(i -1, test_app.table_state.selected().unwrap())
+            }
+            else {
+                assert_eq!(test_len, test_app.table_state.selected().unwrap())
+            }
+        }
+    }
+    #[test]
+    fn down_test() {
+        let mut test_projects = vec![];
+
+        for i in 0..29 {
+            test_projects.push(Project::new(String::from("Dangle No. ".to_owned() + &i.to_string() ), 1,Cost::None,true,false,4,PaintLevel::Character,1.0f64,false));
+        }
+        let test_len = &test_projects.len()-1;
+        let mut test_app = App::new(test_projects);
+        for i in 2..0 {
+            test_app.move_up();
+            if i != test_len{
+                assert_eq!(i+1, test_app.table_state.selected().unwrap())
+            }
+            else {
+                assert_eq!(0, test_app.table_state.selected().unwrap())
+            }
+        }
+    }
 }
