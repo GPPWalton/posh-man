@@ -1,7 +1,7 @@
 
 use std::io;
 
-use project::project::{Cost,Project,PaintLevel};
+use project::project::{Project};
 use crossterm::event::{self, Event as crossEvent, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
     layout::Constraint,
@@ -57,7 +57,6 @@ const ITEM_HEIGHT: usize = 4;
 #[derive(Debug, Default)]
 pub struct App {
     table_state: TableState,
-    row_pos: usize,
     data: Vec<Project>,
     exit: bool,
     longest_item_lens: (u16, u16, u16,u16, u16, u16,u16, u16, u16),
@@ -343,6 +342,7 @@ impl App {
 
 mod tests {
     use super::*;
+    use project::project::{Cost,PaintLevel};
     #[test]
     fn up_test() {
         let mut test_projects = vec![];
