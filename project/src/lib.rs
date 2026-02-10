@@ -59,7 +59,6 @@ pub mod project{
         paint_level: PaintLevel,
         priority: f64,
         status: bool,
-
     }
     impl Project {
 
@@ -80,7 +79,7 @@ pub mod project{
             }
         }
         //get methods - 
-        pub fn project_name (&self) -> String{self.project_name.clone()} 
+        pub fn project_name (&self) -> &str{&self.project_name} 
         pub fn size (&self)-> u8 {self.size}
         pub fn cost (&self)-> Cost {self.cost}
         pub fn whole_army (&self)-> bool {self.whole_army}
@@ -89,6 +88,15 @@ pub mod project{
         pub fn paint_level (&self)-> PaintLevel {self.paint_level}
         pub fn priority (&self)-> f64 {self.priority}
         pub fn status (&self)-> bool {self.status}
+
+        //return object as string array
+        pub fn as_str_array(&self) -> [String; 9] {
+        [self.project_name().to_string(), self.size.to_string() ,
+        self.cost().to_string(), self.whole_army().to_string(),
+        self.needs_assembly().to_string(),
+        self.kitbash_rating().to_string(),self.paint_level().to_string(),
+        self.priority().to_string(),self.status.to_string()]
+    }
     }
     //To do calculate priority using fibonacci storypointing
     //fn calc_priority, should this be calculated after all projects are generated??
