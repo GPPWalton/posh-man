@@ -1,6 +1,5 @@
 pub mod project{
-    use tabled::{Tabled};
-    use std::{fmt, vec};
+    use std::{fmt};
     #[derive(Debug, serde::Serialize, serde::Deserialize,Copy,Clone)]
     pub enum Cost{
         None,
@@ -47,8 +46,7 @@ pub mod project{
         }
     }
 
-    #[derive(Debug, serde::Serialize, serde::Deserialize, Tabled)]
-    #[tabled(rename_all = "Upper Title Case")]
+    #[derive(Debug, serde::Serialize, serde::Deserialize)]
     pub struct Project{
         project_name: String,
         size: u8,
