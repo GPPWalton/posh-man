@@ -14,7 +14,6 @@ use ratatui::{
         Scrollbar,ScrollbarOrientation,},
     DefaultTerminal, Frame,
 };
-
 use unicode_width::UnicodeWidthStr;
 
 const PALETTES: [tailwind::Palette; 4] = [
@@ -59,7 +58,7 @@ pub struct App {
     table_state: TableState,
     data: Vec<Project>,
     exit: bool,
-    longest_item_lens: (u16,u16,u16,u16,u16,u16,u16,u16,u16,u16,u16,u16),
+    longest_item_lens: [u16;12],
     scroll_state: ScrollbarState,
     colors: TableColors,
     color_index: usize,
@@ -74,13 +73,22 @@ pub enum CurrentScreen {
     Editing,    //when editing entry
     Exiting,    //confirmation of edit
 }
+fn max_width<F, T>(items: &[Project], field_fn: F) -> u16 where F: Fn(&Project) -> T, T: ToString,
+{
+    items
+        .iter()
+        .map(|x| field_fn(x).to_string())
+        .map(|x| UnicodeWidthStr::width(x.as_str()))
+        .max()
+        .unwrap_or(0) as u16
+}
 impl App {
 
     //constructor
     pub fn new(data: Vec<Project>) -> App {
         App {
             table_state: TableState::default(),
-            longest_item_lens: Self::constraint_len_calculator(&data),
+            longest_item_lens: Self::get_constraints(&data),
             data: data,
             exit: false,
             scroll_state: ScrollbarState::default(),
@@ -165,18 +173,18 @@ impl App {
             rows,
             [
                 // + 1 is for padding.
-                Constraint::Length(self.longest_item_lens.0 + 1),
-                Constraint::Min(self.longest_item_lens.1 + 1),
-                Constraint::Min(self.longest_item_lens.2),
-                Constraint::Min(self.longest_item_lens.3),
-                Constraint::Min(self.longest_item_lens.4),
-                Constraint::Min(self.longest_item_lens.5),
-                Constraint::Min(self.longest_item_lens.6),
-                Constraint::Min(self.longest_item_lens.7),
-                Constraint::Min(self.longest_item_lens.8),
-                Constraint::Min(self.longest_item_lens.9),
-                Constraint::Min(self.longest_item_lens.10),
-                Constraint::Min(self.longest_item_lens.11),
+                Constraint::Length(self.longest_item_lens[0] + 1),
+                Constraint::Min(self.longest_item_lens[1] + 1),
+                Constraint::Min(self.longest_item_lens[2]),
+                Constraint::Min(self.longest_item_lens[3]),
+                Constraint::Min(self.longest_item_lens[4]),
+                Constraint::Min(self.longest_item_lens[5]),
+                Constraint::Min(self.longest_item_lens[6]),
+                Constraint::Min(self.longest_item_lens[7]),
+                Constraint::Min(self.longest_item_lens[8]),
+                Constraint::Min(self.longest_item_lens[9]),
+                Constraint::Min(self.longest_item_lens[10]),
+                Constraint::Min(self.longest_item_lens[11]),
             
             ],
         )
@@ -273,85 +281,23 @@ impl App {
         self.colors = TableColors::new(&PALETTES[self.color_index]);
     }
 
-    fn constraint_len_calculator(items: &Vec<Project>) -> (u16,u16,u16,u16,u16,u16,u16,u16,u16,u16,u16,u16) {
-    //TODO: simplify this as each one is the same.
-    let project_name_len = items
-        .iter()
-        .map(|x| x.project_name().to_string())
-        .map(|x| UnicodeWidthStr::width(x.as_str()))
-        .max()
-        .unwrap_or(0);
-    let size_len = items
-        .iter()
-        .map(|x| x.size().to_string())
-        .map(|x: String| UnicodeWidthStr::width(x.as_str()))
-        .max()
-        .unwrap_or(0);
-    let cost_len = items
-        .iter()
-        .map(|x| x.cost().to_string())
-        .map(|x: String| UnicodeWidthStr::width(x.as_str()))
-        .max()
-        .unwrap_or(0);
-    let whole_army_len = items
-        .iter()
-        .map(|x| x.whole_army().to_string())
-        .map(|x: String| UnicodeWidthStr::width(x.as_str()))
-        .max()
-        .unwrap_or(0);
-    let needs_assembly_len = items
-        .iter()
-        .map(|x| x.needs_assembly().to_string())
-        .map(|x: String| UnicodeWidthStr::width(x.as_str()))
-        .max()
-        .unwrap_or(0);
-    let kitbash_rating_len = items
-        .iter()
-        .map(|x| x.kitbash_rating().to_string())
-        .map(|x: String| UnicodeWidthStr::width(x.as_str()))
-        .max()
-        .unwrap_or(0);
-    let paint_level_len = items
-        .iter()
-        .map(|x| x.paint_level().to_string())
-        .map(|x: String| UnicodeWidthStr::width(x.as_str()))
-        .max()
-        .unwrap_or(0);
-    let complexity_len= items
-        .iter()
-        .map(|x| x.complexity_rating().to_string())
-        .map(|x: String| UnicodeWidthStr::width(x.as_str()))
-        .max()
-        .unwrap_or(0);
-    let preference_len= items
-        .iter()
-        .map(|x| x.preference_modifier().to_string())
-        .map(|x: String| UnicodeWidthStr::width(x.as_str()))
-        .max()
-        .unwrap_or(0);
-    let priority_len= items
-        .iter()
-        .map(|x| x.priority().to_string())
-        .map(|x: String| UnicodeWidthStr::width(x.as_str()))
-        .max()
-        .unwrap_or(0);
-    let status_len = items
-        .iter()
-        .map(|x| x.status().to_string())
-        .map(|x: String| UnicodeWidthStr::width(x.as_str()))
-        .max()
-        .unwrap_or(0);
-    let is_owned_len= items
-        .iter()
-        .map(|x| x.is_owned().to_string())
-        .map(|x: String| UnicodeWidthStr::width(x.as_str()))
-        .max()
-        .unwrap_or(0);
+    fn get_constraints(items: &Vec<Project>) -> [u16;12] {
+        [
+            max_width(items, |x| x.project_name().to_string()),
+            max_width(items, |x| x.size().to_string()),
+            max_width(items, |x| x.cost().to_string()),
+            max_width(items, |x| x.whole_army().to_string()),
+            max_width(items, |x| x.needs_assembly().to_string()),
+            max_width(items, |x| x.kitbash_rating().to_string()),
+            max_width(items, |x| x.paint_level().to_string()),
+            max_width(items, |x| x.complexity_rating().to_string()),
+            max_width(items, |x| x.preference_modifier().to_string()),
+            max_width(items, |x| x.priority().to_string()),
+            max_width(items, |x| x.status().to_string()),
+            max_width(items, |x| x.is_owned().to_string()),
+        ]
 
-    (project_name_len as u16, size_len as u16, cost_len as u16,
-    whole_army_len as u16, needs_assembly_len as u16, kitbash_rating_len as u16,
-    paint_level_len as u16,complexity_len as u16, preference_len as u16, priority_len as u16,
-    status_len as u16, is_owned_len as u16)
+    
 }
 }
 
