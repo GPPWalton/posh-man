@@ -20,12 +20,8 @@ fn new_file(file_path: Option<&str>, headers: [&str; 12])-> Result<File, Box<dyn
     Ok(file)
 }
 
-fn read_file()-> Result<Vec<Project>, Box<dyn Error>>{
+fn read_file(headers: [&str; 12])-> Result<Vec<Project>, Box<dyn Error>>{
     let filepath= OsString::from("project_priorities.csv");
-
-    let headers = ["Project","Size","Cost","Whole Army/Warband",
-    "Assembly Required","Kitbash Rating","Painting Level","Complexity Rating",
-    "Preference Modifier","Priority","Status","Is Owned"];
 
     //if file does not exist, make a new one!
     let file = File::open(&filepath).unwrap_or_else(|error| {
@@ -47,20 +43,18 @@ fn read_file()-> Result<Vec<Project>, Box<dyn Error>>{
 }
 
 fn add_project() -> Result<(), Box<dyn Error>> { //IMPLEMENT: add record to project_priorities.csv
-    Ok(())
+    todo!();
 }
 
-fn get_first_arg() -> Result<(), Box<dyn Error>> {
+fn get_first_arg(headers: [&str; 12]) -> Result<(), Box<dyn Error>> {
     //maybe change to accept different arguments, display to show project priorities table,
     match env::args_os().nth(1) {
         None => Err(From::from("expected 1 argument, but got none")),
         Some(argument )=> {if argument == OsString::from("display") {
             //run function for displaying csv
-            let data = read_file()?;
-
-            Ok(ratatui::run(|terminal| App::new(data).run(terminal))?)
+            let data = read_file(headers)?;
+            Ok(ratatui::run(|terminal| App::new(data).run(terminal,headers))?)
         }
-        //UNIMPLEMENTED
         else if argument == OsString::from("add"){
             add_project()
         }
@@ -71,7 +65,10 @@ fn get_first_arg() -> Result<(), Box<dyn Error>> {
 }
 
 fn main(){
-    if let Err(err) = get_first_arg() {
+    let headers = ["Project","Size","Cost","Whole Army/Warband",
+    "Assembly Required","Kitbash Rating","Painting Level","Complexity Rating",
+    "Preference Modifier","Priority","Status","Is Owned"];
+    if let Err(err) = get_first_arg(headers) {
         println!("{}", err);
         process::exit(1);
     }    

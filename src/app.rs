@@ -59,7 +59,7 @@ pub struct App {
     table_state: TableState,
     data: Vec<Project>,
     exit: bool,
-    longest_item_lens: (u16, u16, u16,u16, u16, u16,u16, u16, u16),
+    longest_item_lens: (u16,u16,u16,u16,u16,u16,u16,u16,u16,u16,u16,u16),
     scroll_state: ScrollbarState,
     colors: TableColors,
     color_index: usize,
@@ -89,22 +89,22 @@ impl App {
     }
 
     /// runs the application's main loop until the user quits
-    pub fn run(&mut self, terminal: &mut DefaultTerminal) -> io::Result<()> {
+    pub fn run(&mut self, terminal: &mut DefaultTerminal, headers: [&str;12]) -> io::Result<()> {
         while !self.exit {
             //main loop goes here
-            terminal.draw(|frame| self.draw(frame))?;
+            terminal.draw(|frame| self.draw(frame,headers))?;
             self.handle_events()?;
         }
         Ok(())
     }
 
-    fn draw(&mut self, frame: &mut Frame) {
+    fn draw(&mut self, frame: &mut Frame, headers: [&str;12]) {
         let vertical = &Layout::vertical([Constraint::Min(5), Constraint::Length(4)]);
         let rects = vertical.split(frame.area());
 
         self.set_colors();
 
-        self.render_table(frame, rects[0]);
+        self.render_table(frame, rects[0],headers);
         self.render_scrollbar(frame, rects[0]);
         self.render_footer(frame, rects[1]);
     }
@@ -130,7 +130,7 @@ impl App {
         }
     }
 
-    fn render_table(&mut self, frame: &mut Frame, area: Rect) {
+    fn render_table(&mut self, frame: &mut Frame, area: Rect,headers: [&str;12]) {
         let header_style = Style::default()
             .fg(self.colors.header_fg)
             .bg(self.colors.header_bg);
@@ -142,9 +142,7 @@ impl App {
             .add_modifier(Modifier::REVERSED)
             .fg(self.colors.selected_cell_style_fg);
 
-        let header = ["Project","Size","Cost","Whole Army/Warband",
-    "Assembly Required","Kitbash Rating","Painting Level","Complexity Rating",
-    "Preference Modifier","Priority","Status","Is Owned"]
+        let header = headers
             .into_iter()
             .map(Cell::from)
             .collect::<Row>()
@@ -176,6 +174,10 @@ impl App {
                 Constraint::Min(self.longest_item_lens.6),
                 Constraint::Min(self.longest_item_lens.7),
                 Constraint::Min(self.longest_item_lens.8),
+                Constraint::Min(self.longest_item_lens.9),
+                Constraint::Min(self.longest_item_lens.10),
+                Constraint::Min(self.longest_item_lens.11),
+            
             ],
         )
         .header(header)
@@ -271,7 +273,7 @@ impl App {
         self.colors = TableColors::new(&PALETTES[self.color_index]);
     }
 
-    fn constraint_len_calculator(items: &Vec<Project>) -> (u16, u16, u16,u16, u16, u16,u16, u16, u16) {
+    fn constraint_len_calculator(items: &Vec<Project>) -> (u16,u16,u16,u16,u16,u16,u16,u16,u16,u16,u16,u16) {
     //TODO: simplify this as each one is the same.
     let project_name_len = items
         .iter()
@@ -315,6 +317,18 @@ impl App {
         .map(|x: String| UnicodeWidthStr::width(x.as_str()))
         .max()
         .unwrap_or(0);
+    let complexity_len= items
+        .iter()
+        .map(|x| x.complexity_rating().to_string())
+        .map(|x: String| UnicodeWidthStr::width(x.as_str()))
+        .max()
+        .unwrap_or(0);
+    let preference_len= items
+        .iter()
+        .map(|x| x.preference_modifier().to_string())
+        .map(|x: String| UnicodeWidthStr::width(x.as_str()))
+        .max()
+        .unwrap_or(0);
     let priority_len= items
         .iter()
         .map(|x| x.priority().to_string())
@@ -327,10 +341,17 @@ impl App {
         .map(|x: String| UnicodeWidthStr::width(x.as_str()))
         .max()
         .unwrap_or(0);
+    let is_owned_len= items
+        .iter()
+        .map(|x| x.is_owned().to_string())
+        .map(|x: String| UnicodeWidthStr::width(x.as_str()))
+        .max()
+        .unwrap_or(0);
 
     (project_name_len as u16, size_len as u16, cost_len as u16,
     whole_army_len as u16, needs_assembly_len as u16, kitbash_rating_len as u16,
-    paint_level_len as u16, priority_len as u16, status_len as u16)
+    paint_level_len as u16,complexity_len as u16, preference_len as u16, priority_len as u16,
+    status_len as u16, is_owned_len as u16)
 }
 }
 
@@ -344,7 +365,7 @@ mod tests {
         let mut test_projects = vec![];
 
         for i in 0..29 {
-            test_projects.push(Project::new(String::from("Dangle No. ".to_owned() + &i.to_string() ), 1,Cost::None,true,false,4,PaintLevel::Character,1.0f64,false));
+            test_projects.push(Project::new(String::from("Dangle No. ".to_owned() + &i.to_string() ), 1,Cost::None,true,false,4,PaintLevel::Character,0.01f64,1.0f64,1.0f64,false,true));
         }
         let test_len = &test_projects.len()-1;
         let mut test_app = App::new(test_projects);
@@ -363,7 +384,7 @@ mod tests {
         let mut test_projects = vec![];
 
         for i in 0..29 {
-            test_projects.push(Project::new(String::from("Dangle No. ".to_owned() + &i.to_string() ), 1,Cost::None,true,false,4,PaintLevel::Character,1.0f64,false));
+test_projects.push(Project::new(String::from("Dangle No. ".to_owned() + &i.to_string() ), 1,Cost::None,true,false,4,PaintLevel::Character,0.01f64,1.0f64,1.0f64,false,true));
         }
         let test_len = &test_projects.len()-1;
         let mut test_app = App::new(test_projects);
