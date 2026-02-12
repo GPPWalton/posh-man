@@ -42,7 +42,8 @@ fn read_file(headers: [&str; 12])-> Result<Vec<Project>, Box<dyn Error>>{
     Ok(project_list)
 }
 
-fn add_project() -> Result<(), Box<dyn Error>> { //IMPLEMENT: add record to project_priorities.csv
+fn add_project() -> Result<(), Box<dyn Error>> {
+    //TODO: add record to project_priorities.csv
     todo!();
 }
 

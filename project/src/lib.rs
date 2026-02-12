@@ -60,7 +60,6 @@ pub mod project{
         priority: f64,
         status: bool,
         is_owned: bool,
-        //missing complexity rating, preference modifier and is owned
     }
     impl Project {
 
@@ -109,6 +108,6 @@ pub mod project{
         self.priority().to_string(),self.status.to_string(),self.is_owned().to_string()]
     }
     }
-    //To do calculate priority using fibonacci storypointing
+    //TODO: calculate priority using fibonacci storypointing
     //fn calc_priority, should this be calculated after all projects are generated??
 }

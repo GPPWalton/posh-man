@@ -1,26 +1,18 @@
 
-use std::io;
-
+use std::{io, vec};
 use project::project::{Project};
 use crossterm::event::{self, Event as crossEvent, KeyCode, KeyEvent, KeyEventKind};
 use ratatui::{
-    layout::Constraint,
-    layout::{Layout, Rect,Margin},
-    style::{Style, Stylize, Modifier,palette::tailwind, Color},
-    text::{Text},
-    widgets::{Block, Paragraph,BorderType, Table,
-        TableState, Row, Cell,
-        ScrollbarState, HighlightSpacing,
-        Scrollbar,ScrollbarOrientation,},
-    DefaultTerminal, Frame,
+    DefaultTerminal, Frame, layout::{Constraint, Layout, Margin, Rect},
+    style::{Color, Modifier, Style, Stylize, palette::tailwind},
+     text::{Line, Text}, widgets::{Block, BorderType, Cell, HighlightSpacing,
+        Paragraph, Row, Scrollbar, ScrollbarOrientation, ScrollbarState, Table, TableState}
 };
 use unicode_width::UnicodeWidthStr;
 
-const PALETTES: [tailwind::Palette; 4] = [
+const PALETTES: [tailwind::Palette; 2] = [
     tailwind::BLUE,
     tailwind::EMERALD,
-    tailwind::INDIGO,
-    tailwind::RED,
 ];
 #[derive(Debug, Default)]
 struct TableColors {
@@ -53,6 +45,9 @@ impl TableColors {
     }
 }
 const ITEM_HEIGHT: usize = 4;
+
+//TODO: consider replacing this with a dynamic value calculated in the process_cell_content function
+const CELL_WRAP_LIMIT: usize = 16;
 #[derive(Debug, Default)]
 pub struct App {
     table_state: TableState,
@@ -81,6 +76,40 @@ fn max_width<F, T>(items: &[Project], field_fn: F) -> u16 where F: Fn(&Project) 
         .map(|x| UnicodeWidthStr::width(x.as_str()))
         .max()
         .unwrap_or(0) as u16
+}
+fn process_cell_content<'a> (content: String) -> Text<'a>{
+    //find how many lines
+    let num_lines = &content.chars().count() / CELL_WRAP_LIMIT;
+    let isolated_words: Vec<&str> = content.split_whitespace().collect();
+
+    let mut lines: Vec<Line> = Vec::new();
+    let mut current_line = String::new();
+
+    for word in isolated_words {
+        // Check if adding this word would exceed the limit
+        let potential_line = if current_line.is_empty() {
+            word.to_string()
+        } else {
+            format!("{} {}", current_line, word)
+        };
+
+        if potential_line.chars().count() > CELL_WRAP_LIMIT {
+            // Current line is full, push it and start a new line
+            if !current_line.is_empty() {
+                lines.push(Line::from(current_line));
+            }
+            current_line = word.to_string();
+        } else {
+            // Add word to current line
+            current_line = potential_line;
+        }
+    }
+
+    // Don't forget the last line
+    if !current_line.is_empty() {
+        lines.push(Line::from(current_line));
+    }
+    Text::from(lines)
 }
 impl App {
 
@@ -156,14 +185,17 @@ impl App {
             .collect::<Row>()
             .style(header_style)
             .height(1);
+        //TODO: Figure our how to wrap project_name text
         let rows = self.data.iter().enumerate().map(|(i, data)| {
             let color = match i % 2 {
                 0 => self.colors.normal_row_color,
                 _ => self.colors.alt_row_color,
             };
             let item = data.as_str_array();
+            //split each element into a series of lines based on the number of words
+            //TODO: consider centering each column beyond the first, use slice?
             item.into_iter()
-                .map(|content| Cell::from(Text::from(format!("\n{content}\n"))))
+                .map(|content| Cell::from(Text::from(process_cell_content(content))))
                 .collect::<Row>()
                 .style(Style::new().fg(self.colors.row_fg).bg(color))
                 .height(4)
@@ -343,5 +375,17 @@ test_projects.push(Project::new(String::from("Dangle No. ".to_owned() + &i.to_st
                 assert_eq!(0, test_app.table_state.selected().unwrap())
             }
         }
+    }
+    #[test]
+    fn line_wrap_test(){
+        let line_content = String::from("Lord-Veritant on Gryph-Stalker");
+
+        let cell_text = process_cell_content(line_content);
+        for line in &cell_text.lines {
+            println!("{}", line.to_string());
+        }
+        assert_eq!(cell_text.lines.len(),2);
+        assert_eq!(cell_text.lines[0],Line::from("Lord-Veritant on"));
+        assert_eq!(cell_text.lines[1],Line::from("Gryph-Stalker"));
     }
 }
