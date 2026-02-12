@@ -66,7 +66,7 @@ fn get_first_arg(headers: [&str; 12]) -> Result<(), Box<dyn Error>> {
 }
 
 fn main(){
-    let headers = ["Project","Size","Cost","Whole Army/Warband",
+    let headers = ["Project","Size","Cost","Whole Army / Warband",
     "Assembly Required","Kitbash Rating","Painting Level","Complexity Rating",
     "Preference Modifier","Priority","Status","Is Owned"];
     if let Err(err) = get_first_arg(headers) {

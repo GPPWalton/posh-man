@@ -47,7 +47,8 @@ impl TableColors {
 const ITEM_HEIGHT: usize = 4;
 
 //TODO: consider replacing this with a dynamic value calculated in the process_cell_content function
-const CELL_WRAP_LIMIT: usize = 16;
+const CELL_WRAP_LIMIT: u16 = 16;
+const HEADER_WRAP_LIMIT: u16 = 10;
 #[derive(Debug, Default)]
 pub struct App {
     table_state: TableState,
@@ -77,9 +78,8 @@ fn max_width<F, T>(items: &[Project], field_fn: F) -> u16 where F: Fn(&Project) 
         .max()
         .unwrap_or(0) as u16
 }
-fn process_cell_content<'a> (content: String) -> Text<'a>{
+fn process_cell_content<'a> (content: String, limit: u16) -> Text<'a>{
     //find how many lines
-    let num_lines = &content.chars().count() / CELL_WRAP_LIMIT;
     let isolated_words: Vec<&str> = content.split_whitespace().collect();
 
     let mut lines: Vec<Line> = Vec::new();
@@ -93,7 +93,7 @@ fn process_cell_content<'a> (content: String) -> Text<'a>{
             format!("{} {}", current_line, word)
         };
 
-        if potential_line.chars().count() > CELL_WRAP_LIMIT {
+        if potential_line.chars().count() > limit.into() {
             // Current line is full, push it and start a new line
             if !current_line.is_empty() {
                 lines.push(Line::from(current_line));
@@ -105,7 +105,6 @@ fn process_cell_content<'a> (content: String) -> Text<'a>{
         }
     }
 
-    // Don't forget the last line
     if !current_line.is_empty() {
         lines.push(Line::from(current_line));
     }
@@ -148,8 +147,6 @@ impl App {
 
     fn handle_events(&mut self) -> io::Result<()> {
         match event::read()? {
-            // it's important to check that the event is a key press event as
-            // crossterm also emits key release and repeat events on Windows.
             crossEvent::Key(key_event) if key_event.kind == KeyEventKind::Press => {
                 self.handle_key_event(key_event)
             }
@@ -179,23 +176,23 @@ impl App {
             .add_modifier(Modifier::REVERSED)
             .fg(self.colors.selected_cell_style_fg);
 
+        //TODO: Figure out how to widen columns
         let header = headers
             .into_iter()
-            .map(Cell::from)
+            .map(|content| Cell::from(Text::from(
+                process_cell_content(String::from(content),HEADER_WRAP_LIMIT))))
             .collect::<Row>()
             .style(header_style)
-            .height(1);
-        //TODO: Figure our how to wrap project_name text
+            .height(3);
         let rows = self.data.iter().enumerate().map(|(i, data)| {
             let color = match i % 2 {
                 0 => self.colors.normal_row_color,
                 _ => self.colors.alt_row_color,
             };
             let item = data.as_str_array();
-            //split each element into a series of lines based on the number of words
             //TODO: consider centering each column beyond the first, use slice?
             item.into_iter()
-                .map(|content| Cell::from(Text::from(process_cell_content(content))))
+                .map(|content| Cell::from(Text::from(process_cell_content(content, CELL_WRAP_LIMIT))))
                 .collect::<Row>()
                 .style(Style::new().fg(self.colors.row_fg).bg(color))
                 .height(4)
@@ -204,8 +201,8 @@ impl App {
         let t = Table::new(
             rows,
             [
-                // + 1 is for padding.
-                Constraint::Length(self.longest_item_lens[0] + 1),
+                //these should be at minimum based on header length, except for the first one.
+                Constraint::Length(CELL_WRAP_LIMIT+1),
                 Constraint::Min(self.longest_item_lens[1] + 1),
                 Constraint::Min(self.longest_item_lens[2]),
                 Constraint::Min(self.longest_item_lens[3]),
@@ -380,7 +377,7 @@ test_projects.push(Project::new(String::from("Dangle No. ".to_owned() + &i.to_st
     fn line_wrap_test(){
         let line_content = String::from("Lord-Veritant on Gryph-Stalker");
 
-        let cell_text = process_cell_content(line_content);
+        let cell_text = process_cell_content(line_content,CELL_WRAP_LIMIT);
         for line in &cell_text.lines {
             println!("{}", line.to_string());
         }
