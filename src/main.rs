@@ -9,7 +9,7 @@ use project::project::Project;
 use csv;
 mod app;
 use crate::app::App;
-fn new_file(file_path: Option<&str>, headers: [&str; 12])-> Result<File, Box<dyn Error>>{
+fn new_file(file_path: Option<&str>, headers: [&str; 11])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
     let file = File::create(file_path.unwrap())?;
    let mut wtr = csv::Writer::from_path(file_path.unwrap())?;
@@ -20,7 +20,7 @@ fn new_file(file_path: Option<&str>, headers: [&str; 12])-> Result<File, Box<dyn
     Ok(file)
 }
 
-fn read_file(headers: [&str; 12])-> Result<Vec<Project>, Box<dyn Error>>{
+fn read_file(headers: [&str; 11])-> Result<Vec<Project>, Box<dyn Error>>{
     let filepath= OsString::from("project_priorities.csv");
 
     //if file does not exist, make a new one!
@@ -47,7 +47,7 @@ fn add_project() -> Result<(), Box<dyn Error>> {
     todo!();
 }
 
-fn get_first_arg(headers: [&str; 12]) -> Result<(), Box<dyn Error>> {
+fn get_first_arg(headers: [&str; 11]) -> Result<(), Box<dyn Error>> {
     //maybe change to accept different arguments, display to show project priorities table,
     match env::args_os().nth(1) {
         None => Err(From::from("expected 1 argument, but got none")),
@@ -68,7 +68,7 @@ fn get_first_arg(headers: [&str; 12]) -> Result<(), Box<dyn Error>> {
 fn main(){
     let headers = ["Project","Size","Cost","Whole Army / Warband",
     "Assembly Required","Kitbash Rating","Painting Level","Complexity Rating",
-    "Preference Modifier","Priority","Status","Is Owned"];
+    "Priority","Status","Is Owned"];
     if let Err(err) = get_first_arg(headers) {
         println!("{}", err);
         process::exit(1);
