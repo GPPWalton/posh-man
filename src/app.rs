@@ -48,13 +48,15 @@ const ITEM_HEIGHT: usize = 4;
 
 //TODO: consider replacing this with a dynamic value calculated in the process_cell_content function
 const CELL_WRAP_LIMIT: u16 = 16;
+const CELL_PADDING: u16 = 1;
 const HEADER_WRAP_LIMIT: u16 = 10;
+
 #[derive(Debug, Default)]
 pub struct App {
     table_state: TableState,
     data: Vec<Project>,
     exit: bool,
-    longest_item_lens: [u16;12],
+    longest_item_lens: [u16;11],
     scroll_state: ScrollbarState,
     colors: TableColors,
     color_index: usize,
@@ -125,7 +127,7 @@ impl App {
     }
 
     /// runs the application's main loop until the user quits
-    pub fn run(&mut self, terminal: &mut DefaultTerminal, headers: [&str;12]) -> io::Result<()> {
+    pub fn run(&mut self, terminal: &mut DefaultTerminal, headers: [&str;11]) -> io::Result<()> {
         while !self.exit {
             //main loop goes here
             terminal.draw(|frame| self.draw(frame,headers))?;
@@ -134,7 +136,7 @@ impl App {
         Ok(())
     }
 
-    fn draw(&mut self, frame: &mut Frame, headers: [&str;12]) {
+    fn draw(&mut self, frame: &mut Frame, headers: [&str;11]) {
         let vertical = &Layout::vertical([Constraint::Min(5), Constraint::Length(4)]);
         let rects = vertical.split(frame.area());
 
@@ -164,7 +166,7 @@ impl App {
         }
     }
 
-    fn render_table(&mut self, frame: &mut Frame, area: Rect,headers: [&str;12]) {
+    fn render_table(&mut self, frame: &mut Frame, area: Rect,headers: [&str;11]) {
         let header_style = Style::default()
             .fg(self.colors.header_fg)
             .bg(self.colors.header_bg);
@@ -200,20 +202,29 @@ impl App {
         let bar = " █ ";
         let t = Table::new(
             rows,
+            //Hit limit, need horizontal scrolling
             [
-                //these should be at minimum based on header length, except for the first one.
-                Constraint::Length(CELL_WRAP_LIMIT+1),
-                Constraint::Min(self.longest_item_lens[1] + 1),
-                Constraint::Min(self.longest_item_lens[2]),
-                Constraint::Min(self.longest_item_lens[3]),
-                Constraint::Min(self.longest_item_lens[4]),
-                Constraint::Min(self.longest_item_lens[5]),
-                Constraint::Min(self.longest_item_lens[6]),
-                Constraint::Min(self.longest_item_lens[7]),
-                Constraint::Min(self.longest_item_lens[8]),
-                Constraint::Min(self.longest_item_lens[9]),
-                Constraint::Min(self.longest_item_lens[10]),
-                Constraint::Min(self.longest_item_lens[11]),
+                Constraint::Min(CELL_WRAP_LIMIT+CELL_PADDING),
+                // Constraint::Min(self.longest_item_lens[1].max(UnicodeWidthStr::width(headers[1]) as u16)+ CELL_PADDING),
+                // Constraint::Min(self.longest_item_lens[2].max(UnicodeWidthStr::width(headers[2]) as u16)),
+                // Constraint::Min(self.longest_item_lens[3].max(UnicodeWidthStr::width(headers[3]) as u16)),
+                // Constraint::Min(self.longest_item_lens[4].max(UnicodeWidthStr::width(headers[4]) as u16)),
+                // Constraint::Min(self.longest_item_lens[5].max(UnicodeWidthStr::width(headers[5]) as u16)),
+                // Constraint::Min(self.longest_item_lens[6].max(UnicodeWidthStr::width(headers[6]) as u16)),
+                // Constraint::Min(self.longest_item_lens[7].max(UnicodeWidthStr::width(headers[7]) as u16)),
+                // Constraint::Min(self.longest_item_lens[8].max(UnicodeWidthStr::width(headers[8]) as u16)),
+                // Constraint::Min(self.longest_item_lens[9].max(UnicodeWidthStr::width(headers[9]) as u16)),
+                // Constraint::Min(self.longest_item_lens[10].max(UnicodeWidthStr::width(headers[10]) as u16)),
+                Constraint::Min(self.longest_item_lens[1].max(HEADER_WRAP_LIMIT)+ CELL_PADDING),
+                Constraint::Min(self.longest_item_lens[2].max(HEADER_WRAP_LIMIT)),
+                Constraint::Min(self.longest_item_lens[3].max(HEADER_WRAP_LIMIT)),
+                Constraint::Min(self.longest_item_lens[4].max(HEADER_WRAP_LIMIT)),
+                Constraint::Min(self.longest_item_lens[5].max(HEADER_WRAP_LIMIT)),
+                Constraint::Min(self.longest_item_lens[6].max(HEADER_WRAP_LIMIT)),
+                Constraint::Min(self.longest_item_lens[7].max(HEADER_WRAP_LIMIT)),
+                Constraint::Min(self.longest_item_lens[8].max(HEADER_WRAP_LIMIT)),
+                Constraint::Min(self.longest_item_lens[9].max(HEADER_WRAP_LIMIT)),
+                Constraint::Min(self.longest_item_lens[10].max(HEADER_WRAP_LIMIT)),
             
             ],
         )
@@ -310,7 +321,8 @@ impl App {
         self.colors = TableColors::new(&PALETTES[self.color_index]);
     }
 
-    fn get_constraints(items: &Vec<Project>) -> [u16;12] {
+    fn get_constraints(items: &Vec<Project>) -> [u16;11] {
+        //find out mac unicode width of each column, or the header if the header is longer
         [
             max_width(items, |x| x.project_name().to_string()),
             max_width(items, |x| x.size().to_string()),
@@ -320,7 +332,6 @@ impl App {
             max_width(items, |x| x.kitbash_rating().to_string()),
             max_width(items, |x| x.paint_level().to_string()),
             max_width(items, |x| x.complexity_rating().to_string()),
-            max_width(items, |x| x.preference_modifier().to_string()),
             max_width(items, |x| x.priority().to_string()),
             max_width(items, |x| x.status().to_string()),
             max_width(items, |x| x.is_owned().to_string()),
