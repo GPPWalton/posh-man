@@ -51,8 +51,7 @@ const CELL_WRAP_LIMIT: u16 = 16;
 const CELL_PADDING: u16 = 1;
 const HEADER_WRAP_LIMIT: u16 = 10;
 
-#[derive(Debug, Default)]
-pub struct App {
+pub struct App{
     table_state: TableState,
     data: Vec<Project>,
     exit: bool,
@@ -60,24 +59,42 @@ pub struct App {
     scroll_state: ScrollbarState,
     colors: TableColors,
     color_index: usize,
+    current_screen: CurrentScreen,
+    currently_editing: Option<CurrentlyEditing>,
+    input_array: Option<[String;11]>,
 }
 
 const INFO_TEXT: [&str; 2] = [
     "<Q> quit | <↑> move up | <↓> move down",
     "<Enter> select",
 ];
+
 pub enum CurrentScreen {
     Main,       //main table
     Editing,    //when editing entry
-    Exiting,    //confirmation of edit
+    Adding,     //when adding entry
+    Exiting,    //confirmation of edit or add
 }
-fn max_width<F, T>(items: &[Project], field_fn: F) -> u16 where F: Fn(&Project) -> T, T: ToString,
-{
+pub enum CurrentlyEditing {
+    Project,
+    Size,
+    Cost,
+    WholeArmy,
+    AssemblyRequired,
+    KitbashRating,
+    PaintingLevel,
+    ComplexityRating,
+    Priority
+    ,Status,
+    IsOwned
+}
+fn max_width<F, T>(items: &[Project], field_fn: F) -> u16 where F: Fn(&Project) -> T, T: ToString,{
     items
         .iter()
         .map(|x| field_fn(x).to_string())
         .map(|x| UnicodeWidthStr::width(x.as_str()))
         .max()
+        //TODO: Eliminate this unwrap_or?
         .unwrap_or(0) as u16
 }
 fn process_cell_content<'a> (content: String, limit: u16) -> Text<'a>{
@@ -123,7 +140,11 @@ impl App {
             exit: false,
             scroll_state: ScrollbarState::default(),
             colors: TableColors::new(&PALETTES[0]),
-            color_index: 0 }
+            color_index: 0,
+            current_screen: CurrentScreen::Main,
+            currently_editing: None,
+            input_array: None,
+        }
     }
 
     /// runs the application's main loop until the user quits
@@ -178,7 +199,6 @@ impl App {
             .add_modifier(Modifier::REVERSED)
             .fg(self.colors.selected_cell_style_fg);
 
-        //TODO: Figure out how to widen columns
         let header = headers
             .into_iter()
             .map(|content| Cell::from(Text::from(
@@ -202,19 +222,8 @@ impl App {
         let bar = " █ ";
         let t = Table::new(
             rows,
-            //Hit limit, need horizontal scrolling
             [
                 Constraint::Min(CELL_WRAP_LIMIT+CELL_PADDING),
-                // Constraint::Min(self.longest_item_lens[1].max(UnicodeWidthStr::width(headers[1]) as u16)+ CELL_PADDING),
-                // Constraint::Min(self.longest_item_lens[2].max(UnicodeWidthStr::width(headers[2]) as u16)),
-                // Constraint::Min(self.longest_item_lens[3].max(UnicodeWidthStr::width(headers[3]) as u16)),
-                // Constraint::Min(self.longest_item_lens[4].max(UnicodeWidthStr::width(headers[4]) as u16)),
-                // Constraint::Min(self.longest_item_lens[5].max(UnicodeWidthStr::width(headers[5]) as u16)),
-                // Constraint::Min(self.longest_item_lens[6].max(UnicodeWidthStr::width(headers[6]) as u16)),
-                // Constraint::Min(self.longest_item_lens[7].max(UnicodeWidthStr::width(headers[7]) as u16)),
-                // Constraint::Min(self.longest_item_lens[8].max(UnicodeWidthStr::width(headers[8]) as u16)),
-                // Constraint::Min(self.longest_item_lens[9].max(UnicodeWidthStr::width(headers[9]) as u16)),
-                // Constraint::Min(self.longest_item_lens[10].max(UnicodeWidthStr::width(headers[10]) as u16)),
                 Constraint::Min(self.longest_item_lens[1].max(HEADER_WRAP_LIMIT)+ CELL_PADDING),
                 Constraint::Min(self.longest_item_lens[2].max(HEADER_WRAP_LIMIT)),
                 Constraint::Min(self.longest_item_lens[3].max(HEADER_WRAP_LIMIT)),
@@ -314,7 +323,11 @@ impl App {
 
     fn select_entry(&mut self){
         //TODO: implement properly later
+        //change colour of the selected row
         self.color_index = (self.color_index + 1) % PALETTES.len();
+    }
+    fn save_input (&mut self) {
+        //add new project to data vector based on input array
     }
 
     pub fn set_colors(&mut self) {
@@ -342,7 +355,6 @@ impl App {
 }
 
 #[cfg(test)]
-
 mod tests {
     use super::*;
     use project::project::{Cost,PaintLevel};
@@ -351,16 +363,18 @@ mod tests {
         let mut test_projects = vec![];
 
         for i in 0..29 {
-            test_projects.push(Project::new(String::from("Dangle No. ".to_owned() + &i.to_string() ), 1,Cost::None,true,false,4,PaintLevel::Character,0.01f64,1.0f64,1.0f64,false,true));
+            test_projects.push(Project::new(String::from("Dangle No. ".to_owned() + &i.to_string() ), 1,Cost::None,true,false,4,PaintLevel::Character,1.0f64,1.0f64,false,true));
         }
         let test_len = &test_projects.len()-1;
         let mut test_app = App::new(test_projects);
         for i in 2..0 {
             test_app.move_up();
             if i != 0{
+                //TODO: remove unwrap
                 assert_eq!(i -1, test_app.table_state.selected().unwrap())
             }
             else {
+                //TODO: remove unwrap
                 assert_eq!(test_len, test_app.table_state.selected().unwrap())
             }
         }
@@ -370,16 +384,18 @@ mod tests {
         let mut test_projects = vec![];
 
         for i in 0..29 {
-test_projects.push(Project::new(String::from("Dangle No. ".to_owned() + &i.to_string() ), 1,Cost::None,true,false,4,PaintLevel::Character,0.01f64,1.0f64,1.0f64,false,true));
+test_projects.push(Project::new(String::from("Dangle No. ".to_owned() + &i.to_string() ), 1,Cost::None,true,false,4,PaintLevel::Character,1.0f64,1.0f64,false,true));
         }
         let test_len = &test_projects.len()-1;
         let mut test_app = App::new(test_projects);
         for i in 2..0 {
             test_app.move_up();
             if i != test_len{
+                //TODO: remove unwrap
                 assert_eq!(i+1, test_app.table_state.selected().unwrap())
             }
             else {
+                //TODO: remove unwrap
                 assert_eq!(0, test_app.table_state.selected().unwrap())
             }
         }

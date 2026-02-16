@@ -11,6 +11,7 @@ mod app;
 use crate::app::App;
 fn new_file(file_path: Option<&str>, headers: [&str; 11])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
+    //TODO: remove unwraps
     let file = File::create(file_path.unwrap())?;
    let mut wtr = csv::Writer::from_path(file_path.unwrap())?;
     // Add header to file
@@ -24,6 +25,7 @@ fn read_file(headers: [&str; 11])-> Result<Vec<Project>, Box<dyn Error>>{
     let filepath= OsString::from("project_priorities.csv");
 
     //if file does not exist, make a new one!
+    //TODO: remove unwraps
     let file = File::open(&filepath).unwrap_or_else(|error| {
         if error.kind() == ErrorKind::NotFound {
             new_file(filepath.to_str(),headers).unwrap()
