@@ -1,5 +1,5 @@
 pub mod project{
-    use std::{fmt};
+    use std::{fmt, str::FromStr, u8};
     #[derive(Debug, serde::Serialize, serde::Deserialize,Copy,Clone)]
     pub enum Cost{
         None,
@@ -17,6 +17,7 @@ pub mod project{
             }
         }
     }
+
     impl fmt::Display for Cost {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
             write!(f, "{}", self.to_string())
@@ -95,16 +96,30 @@ pub mod project{
         pub fn status (&self)-> bool {self.status}
         pub fn is_owned (&self)-> bool {self.is_owned}
 
+        //set methods
+        pub fn set_project_name (&mut self, input: String){self.project_name = input;}
+        pub fn set_size(&mut self, input: u8) {self.size = input;}
+        pub fn set_cost(&mut self, input: Cost) {self.cost = input;}
+        pub fn set_whole_army(&mut self, input: bool) {self.whole_army = input;}
+        pub fn set_needs_assembly(&mut self, input: bool) {self.needs_assembly = input;}
+        pub fn set_kitbash_rating(&mut self, input: u8) {self.kitbash_rating = input;}
+        pub fn set_paint_level(&mut self, input: PaintLevel) {self.paint_level = input;}
+        pub fn set_complexity_rating(&mut self, input: f64) {self.complexity_rating = input;}
+        pub fn set_priority(&mut self, input: f64) {self.priority = input;}
+        pub fn set_status(&mut self, input: bool) {self.status = input;}
+        pub fn set_is_owned(&mut self, input: bool) {self.is_owned = input;}
+
         //return object as string array
         pub fn as_str_array(&self) -> [String; 11] {
-        [self.project_name().to_string(), self.size.to_string() ,
-        self.cost().to_string(), self.whole_army().to_string(),
-        self.needs_assembly().to_string(),
-        self.kitbash_rating().to_string(),self.paint_level().to_string(),
-        self.complexity_rating().to_string(),
-        self.priority().to_string(),self.status.to_string(),self.is_owned().to_string()]
+            [self.project_name().to_string(), self.size.to_string() ,
+            self.cost().to_string(), self.whole_army().to_string(),
+            self.needs_assembly().to_string(),
+            self.kitbash_rating().to_string(),self.paint_level().to_string(),
+            self.complexity_rating().to_string(),
+            self.priority().to_string(),self.status.to_string(),self.is_owned().to_string()]
+        }
     }
-    }
+    
     //TODO: calculate priority using fibonacci storypointing
     //fn calc_priority, should this be calculated after all projects are generated??
 }
