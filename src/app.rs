@@ -333,6 +333,29 @@ impl<'a> App<'a> {
             Ok(input) =>input,
             Err(e) => panic!("the following error occured on input {:?}",e),
         });
+
+        //clear the input array
+        self.input_array = ["","","","","","","","","","",""];
+        self.currently_editing = None;
+    }
+    pub fn edit_next(&mut self) {
+        if let Some(edit_mode) = &self.currently_editing {
+            match edit_mode {
+                CurrentlyEditing::Project => self.currently_editing = Some(CurrentlyEditing::Size),
+                CurrentlyEditing::Size => self.currently_editing = Some(CurrentlyEditing::Cost),
+                CurrentlyEditing::Cost => self.currently_editing = Some(CurrentlyEditing::WholeArmy),
+                CurrentlyEditing::WholeArmy => self.currently_editing = Some(CurrentlyEditing::AssemblyRequired),
+                CurrentlyEditing::AssemblyRequired => self.currently_editing = Some(CurrentlyEditing::KitbashRating),
+                CurrentlyEditing::KitbashRating => self.currently_editing = Some(CurrentlyEditing::PaintingLevel),
+                CurrentlyEditing::PaintingLevel => self.currently_editing = Some(CurrentlyEditing::ComplexityRating),
+                CurrentlyEditing::ComplexityRating => self.currently_editing = Some(CurrentlyEditing::Priority),
+                CurrentlyEditing::Priority => self.currently_editing = Some(CurrentlyEditing::Status),
+                CurrentlyEditing::Status => self.currently_editing = Some(CurrentlyEditing::IsOwned),
+                CurrentlyEditing::IsOwned => self.currently_editing = Some(CurrentlyEditing::Project)
+            };
+        } else {
+            self.currently_editing = Some(CurrentlyEditing::Project);
+        }
     }
 
     pub fn set_colors(&mut self) {
@@ -410,9 +433,6 @@ test_projects.push(Project::new(String::from("Dangle No. ".to_owned() + &i.to_st
         let line_content = String::from("Lord-Veritant on Gryph-Stalker");
 
         let cell_text = process_cell_content(line_content,CELL_WRAP_LIMIT);
-        for line in &cell_text.lines {
-            println!("{}", line.to_string());
-        }
         assert_eq!(cell_text.lines.len(),2);
         assert_eq!(cell_text.lines[0],Line::from("Lord-Veritant on"));
         assert_eq!(cell_text.lines[1],Line::from("Gryph-Stalker"));
