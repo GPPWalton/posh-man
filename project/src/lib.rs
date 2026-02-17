@@ -1,5 +1,6 @@
 pub mod project{
     use std::{error::Error, fmt, str::FromStr, u8};
+
     #[derive(Debug, serde::Serialize, serde::Deserialize,Copy,Clone)]
     pub enum Cost{
         None,
