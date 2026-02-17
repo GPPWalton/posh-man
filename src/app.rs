@@ -51,7 +51,7 @@ const CELL_WRAP_LIMIT: u16 = 16;
 const CELL_PADDING: u16 = 1;
 const HEADER_WRAP_LIMIT: u16 = 10;
 
-pub struct App{
+pub struct App <'a>{
     table_state: TableState,
     data: Vec<Project>,
     exit: bool,
@@ -61,7 +61,7 @@ pub struct App{
     color_index: usize,
     current_screen: CurrentScreen,
     currently_editing: Option<CurrentlyEditing>,
-    input_array: Option<[String;11]>,
+    input_array: [&'a str;11],
 }
 
 const INFO_TEXT: [&str; 2] = [
@@ -129,10 +129,10 @@ fn process_cell_content<'a> (content: String, limit: u16) -> Text<'a>{
     }
     Text::from(lines)
 }
-impl App {
+impl<'a> App<'a> {
 
     //constructor
-    pub fn new(data: Vec<Project>) -> App {
+    pub fn new(data: Vec<Project>) -> App<'a > {
         App {
             table_state: TableState::default(),
             longest_item_lens: Self::get_constraints(&data),
@@ -143,7 +143,7 @@ impl App {
             color_index: 0,
             current_screen: CurrentScreen::Main,
             currently_editing: None,
-            input_array: None,
+            input_array: ["","","","","","","","","","",""],
         }
     }
 
@@ -327,7 +327,12 @@ impl App {
         self.color_index = (self.color_index + 1) % PALETTES.len();
     }
     fn save_input (&mut self) {
+        // let tmp = Project::from_arr(self.input_array)?;
         //add new project to data vector based on input array
+        self.data.push(match Project::from_arr(self.input_array) {
+            Ok(input) =>input,
+            Err(e) => panic!("the following error occured on input {:?}",e),
+        });
     }
 
     pub fn set_colors(&mut self) {
