@@ -1,5 +1,5 @@
 pub mod project{
-    use std::{fmt, str::FromStr, u8};
+    use std::{error::Error, fmt, str::FromStr, u8};
     #[derive(Debug, serde::Serialize, serde::Deserialize,Copy,Clone)]
     pub enum Cost{
         None,
@@ -17,6 +17,19 @@ pub mod project{
             }
         }
     }
+    impl FromStr for Cost {
+        type Err = Box<dyn std::error::Error>;
+        fn from_str(s: &str) -> Result<Cost, Self::Err> {
+            //convert to lowercase to remove typing variation
+            match s.trim().to_lowercase().as_str() {
+                "none"=> Ok(Cost::None),
+                "low" => Ok(Cost::Low),
+                "medium"=>Ok(Cost::Medium),
+                "high" => Ok(Cost::High),
+                _ => Err(From::from("Invalid value for cost"))
+            }
+    }
+}
 
     impl fmt::Display for Cost {
         fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -36,6 +49,19 @@ pub mod project{
                 Self::Simple => return String::from("Simple"),
                 Self::Battle => return  String::from("Battle"),
                 Self::Character => return  String::from("Character")
+            }
+        }
+    }
+
+    impl FromStr for PaintLevel {
+        type Err = Box<dyn std::error::Error>;
+        fn from_str(s: &str) -> Result<PaintLevel, Self::Err> {
+            //convert to lowercase to remove typing variation
+            match s.trim().to_lowercase().as_str() {
+                "simple"=> Ok(PaintLevel::Simple),
+                "battle" => Ok(PaintLevel::Battle),
+                "character"=>Ok(PaintLevel::Character),
+                _ => Err(From::from("Invalid value for paint level"))
             }
         }
     }
@@ -118,8 +144,25 @@ pub mod project{
             self.complexity_rating().to_string(),
             self.priority().to_string(),self.status.to_string(),self.is_owned().to_string()]
         }
+        pub fn from_arr(separated_items: [&str;11]) -> Result<Project, Box<dyn Error>> {
+            Ok(Project { project_name: separated_items[0].to_string(),
+                //TODO: handle trimming whitespace and value size-constraints at input for simplicity
+                size: separated_items[1].parse::<u8>()?,
+                cost: Cost::from_str(separated_items[2])?,
+                //TODO: handle lowercasing at input?
+                whole_army: separated_items[3].to_lowercase().parse::<bool>()?,
+                needs_assembly: separated_items[4].to_lowercase().parse::<bool>()?,
+                //TODO: not here, but should normalise kitbash rating to specific range 1-5?
+                kitbash_rating: separated_items[5].parse::<u8>()?,
+                paint_level: PaintLevel::from_str(separated_items[6])?,
+                complexity_rating: separated_items[7].parse::<f64>()?,
+                priority: separated_items[8].parse::<f64>()?,
+                status: separated_items[9].parse::<bool>()?,
+                is_owned: separated_items[10].parse::<bool>()?
+            })
+        }
     }
-    
+        
+    }
     //TODO: calculate priority using fibonacci storypointing
     //fn calc_priority, should this be calculated after all projects are generated??
-}
