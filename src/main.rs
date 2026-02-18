@@ -9,6 +9,7 @@ use project::project::Project;
 use csv;
 mod app;
 use crate::app::App;
+mod ui;
 fn new_file(file_path: Option<&str>, headers: [&str; 11])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
     //TODO: remove unwraps
