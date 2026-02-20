@@ -3,17 +3,9 @@
      layout::{Direction,Constraint,Layout,Rect}
 };
 
-//TODO: consider replacing this with a dynamic value calculated in the process_cell_content function
-const CELL_WRAP_LIMIT: u16 = 16;
-const CELL_PADDING: u16 = 1;
-const HEADER_WRAP_LIMIT: u16 = 10;
 pub const PALETTES: [tailwind::Palette; 2] = [
     tailwind::BLUE,
     tailwind::EMERALD,
-];
-const INFO_TEXT: [&str; 2] = [
-    "<Q> quit | <↑> move up | <↓> move down",
-    "<Enter> select",
 ];
 
 pub mod main_ui;
