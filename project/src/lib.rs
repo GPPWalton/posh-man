@@ -145,7 +145,7 @@ pub mod project{
             self.complexity_rating().to_string(),
             self.priority().to_string(),self.status.to_string(),self.is_owned().to_string()]
         }
-        pub fn from_arr(separated_items: [&str;11]) -> Result<Project, Box<dyn Error>> {
+        pub fn from_arr(separated_items: &[&str;11]) -> Result<Project, Box<dyn Error>> {
             Ok(Project { project_name: separated_items[0].to_string(),
                 //TODO: handle trimming whitespace and value size-constraints at input for simplicity
                 size: separated_items[1].parse::<u8>()?,
