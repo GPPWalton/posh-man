@@ -1,4 +1,4 @@
- use ratatui::{style::{palette::tailwind, Color},
+use ratatui::{style::{palette::tailwind, Color},
      text::{Line, Text},
      layout::{Direction,Constraint,Layout,Rect}
 };
@@ -7,7 +7,7 @@ pub const PALETTES: [tailwind::Palette; 2] = [
     tailwind::BLUE,
     tailwind::EMERALD,
 ];
-
+pub const ITEM_HEIGHT: usize = 4;
 pub mod main_ui;
 pub mod editing_ui;
 
