@@ -1,10 +1,33 @@
 
     use super::*;
     use project::project::Project;
-    use crate::app::CurrentlyEditing;
+    use crate::app::{CurrentScreen, CurrentlyEditing};
 
+    //TODO: implement event_handling for editing pop-up
+    pub fn handle_editing_key_event( app: &mut App, key_event: KeyEvent){
+        match key_event.code {
+            KeyCode::Char('c') => close_popup(app),
+            KeyCode::Left => move_left(app),
+            KeyCode::Right => move_right(app),
+            KeyCode::Enter => confirm(app),
+            _ => {}
+        }
+    }
+    fn move_left(app: &mut App){
+        todo!()
+    }
+    fn move_right(app: &mut App){
+        todo!()
+    }
+    fn close_popup(app: &mut App){
+        app.set_current_screen(CurrentScreen::Main);
+        //change colour of selected row back to 'unselected' colour
+        app.set_color_index((app.get_color_index() + 1) % PALETTES.len());
+    }
+    fn confirm(app: &mut App){
+        todo!()
+    }
     fn save_input (app: &mut App) {
-        // let tmp = Project::from_arr(app.input_array)?;
         //add new project to data vector based on input array
         let new_record = match Project::from_arr(app.get_input_array()) {
             Ok(input) =>input,
@@ -16,7 +39,7 @@
         app.set_input_array(["","","","","","","","","","",""]);
         app.set_currently_editing(None);
     }
-    pub fn edit_next(app: &mut App) {
+    fn edit_next(app: &mut App) {
         if let Some(edit_mode) = &app.get_currently_editing() {
             match edit_mode {
                 CurrentlyEditing::Project => app.set_currently_editing(Some(CurrentlyEditing::Size)),

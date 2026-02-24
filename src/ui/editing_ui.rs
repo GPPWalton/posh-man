@@ -1,5 +1,5 @@
 use crate::{app::CurrentlyEditing, ui::*};
-use ratatui::{Frame, style::Style, widgets::{Block, BorderType, Borders, Paragraph}
+use ratatui::{Frame, style::Style, style::Stylize, symbols::border,widgets::Widget, widgets::{Block, BorderType, Borders, Paragraph}
 };
 use crate::app::App;
 
@@ -12,12 +12,14 @@ const INPUT_WIDTH: u16 = 15;
 //TODO: editing_ui event handlers
 pub fn render_editing_ui(frame: &mut Frame, app: &mut App, selected_index: usize) {
     if let Some(editing) = &app.get_currently_editing() {
-        let editing_block = Block::default()
+        let area = centered_rect(50, 50, frame.area());
+        let editing_block = Block::bordered()
             .title("Add a new project")
-            .borders(Borders::NONE)
-            .style(Style::default().bg(Color::DarkGray));
+            .borders(Borders::ALL)
+            // .style(Style::default().bg(Color::DarkGray))
+            .border_set(border::DOUBLE);
 
-        let area = centered_rect(60, 25, frame.area());
+        
         frame.render_widget(editing_block, area);
 
         let outer_edit_layout = Layout::default().direction(Direction::Horizontal)
@@ -59,7 +61,7 @@ pub fn render_editing_ui(frame: &mut Frame, app: &mut App, selected_index: usize
             CurrentlyEditing::IsOwned => &current_project.is_owned().to_string(),
         };
         //render input_block
-        let input_block = Block::default().title(title).border_type(BorderType::Double);
+        let input_block = Block::bordered().title(title).border_type(BorderType::Double);
         frame.render_widget(input_block, inner_edit_layout[0]);
         //TODO: flashing cursor?
         let input_footer = Paragraph::new(Text::from_iter(INFO_TEXT));

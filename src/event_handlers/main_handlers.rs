@@ -1,4 +1,4 @@
-use crate::event_handlers::*;
+use crate::{app::{CurrentScreen, CurrentlyEditing}, event_handlers::*};
 
 pub fn handle_main_key_event( app: &mut App, key_event: KeyEvent) {
     match key_event.code {
@@ -12,6 +12,7 @@ pub fn handle_main_key_event( app: &mut App, key_event: KeyEvent) {
 
 fn exit(app: &mut App) {
     app.set_exit(true);
+    app.set_current_screen(CurrentScreen::Main);
 }
 
 fn move_up(app: &mut App){
@@ -53,6 +54,8 @@ fn select_entry(app: &mut App){
     //TODO: implement properly later
     //change colour of the selected row
     app.set_color_index((app.get_color_index() + 1) % PALETTES.len());
+    app.set_current_screen(CurrentScreen::Editing);
+    app.set_currently_editing(Some(CurrentlyEditing::Project));
 }
 
 #[cfg(test)]

@@ -5,9 +5,9 @@ use ratatui::{
     DefaultTerminal ,widgets::{ScrollbarState, TableState}
 };
 use unicode_width::UnicodeWidthStr;
-use crate::ui::{TableColors,PALETTES,main_ui::render_main_ui};
-use crate::event_handlers::{handle_events, main_handlers::handle_main_key_event};
-
+use crate::{event_handlers::{handle_editing_key_event, handle_main_key_event,handle_events},
+    ui::{PALETTES, TableColors, main_ui::render_main_ui, render_editing_ui,}
+};
 
 
 fn max_width<F, T>(items: &[Project], field_fn: F) -> u16 where F: Fn(&Project) -> T, T: ToString,{
@@ -73,12 +73,20 @@ impl<'a> App<'a> {
     pub fn run(&mut self, terminal: &mut DefaultTerminal, headers: [&str;11]) -> io::Result<()> {
         while !self.exit {
             //main loop goes here
-            terminal.draw(|frame| render_main_ui(frame, self,headers))?;
-            
+                        
             match self.get_current_screen() {
                 CurrentScreen::Adding => todo!(),
-                CurrentScreen::Editing => todo!(),
-                CurrentScreen::Main => {handle_events(self,handle_main_key_event)?;},
+                CurrentScreen::Editing => {
+                    let selected_index = match self.get_table_state().selected(){
+                        Some(i)=> i,
+                        None => panic!("No entry selected")
+                    };
+                    terminal.draw(|frame| render_editing_ui(frame, self,selected_index))?;
+                    handle_events(self,handle_editing_key_event)?;
+                },
+                CurrentScreen::Main => {
+                    terminal.draw(|frame| render_main_ui(frame, self,headers))?;
+                    handle_events(self,handle_main_key_event)?;},
                 CurrentScreen::Exiting => todo!()
             }
 
