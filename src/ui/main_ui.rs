@@ -43,39 +43,6 @@ impl TableColors {
     }
 }
 
-fn process_cell_content<'a> (content: String, limit: u16) -> Text<'a>{
-    //find how many lines
-    let isolated_words: Vec<&str> = content.split_whitespace().collect();
-
-    let mut lines: Vec<Line> = Vec::new();
-    let mut current_line = String::new();
-
-    for word in isolated_words {
-        // Check if adding this word would exceed the limit
-        let potential_line = if current_line.is_empty() {
-            word.to_string()
-        } else {
-            format!("{} {}", current_line, word)
-        };
-
-        if potential_line.chars().count() > limit.into() {
-            // Current line is full, push it and start a new line
-            if !current_line.is_empty() {
-                lines.push(Line::from(current_line));
-            }
-            current_line = word.to_string();
-        } else {
-            // Add word to current line
-            current_line = potential_line;
-        }
-    }
-
-    if !current_line.is_empty() {
-        lines.push(Line::from(current_line));
-    }
-    Text::from(lines)
-}
-
 pub fn render_main_ui(frame: &mut Frame, app: &mut App, headers: [&str;11]){
     let main_layout = &Layout::vertical([Constraint::Min(5), Constraint::Length(4)]);
     let rects = main_layout.split(frame.area());
