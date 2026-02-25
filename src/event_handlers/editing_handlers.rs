@@ -2,22 +2,47 @@
     use super::*;
     use project::project::Project;
     use crate::app::{CurrentScreen, CurrentlyEditing};
+    use strum::{IntoEnumIterator};
 
+    //enum to represent direction user moves through attributes when editing
+    enum StepDirection {
+        Left,
+        Right
+    }
     //TODO: implement event_handling for editing pop-up
     pub fn handle_editing_key_event( app: &mut App, key_event: KeyEvent){
         match key_event.code {
+            //TODO: change keycode to Ctrl+C or Esc
             KeyCode::Char('c') => close_popup(app),
-            KeyCode::Left => move_left(app),
-            KeyCode::Right => move_right(app),
+            KeyCode::Left => move_to(StepDirection::Left,app),
+            KeyCode::Right => move_to(StepDirection::Right,app),
             KeyCode::Enter => confirm(app),
             _ => {}
         }
     }
-    fn move_left(app: &mut App){
-        todo!()
+    fn move_to(direction: StepDirection,app: &mut App){
+        if let Some(edit_mode) = &app.get_currently_editing() {
+            //convert enum into vector
+            let currently_editing_vec: Vec<_> = CurrentlyEditing::iter().collect();
+            //find index of the current value of the enum
+            let current_index = match currently_editing_vec.iter().position(|v| v == edit_mode){
+                Some(i) => i,
+                None => panic!("CurrentlyEditing value not found in vector")
+            };
+            let len = currently_editing_vec.len();
+
+            let next_index = match direction {
+                //wrap around the vector, using modulo for remainder,
+                StepDirection::Left => (current_index + len - 1) % len,
+                StepDirection::Right => (current_index + 1) % len,
+            };
+
+            app.set_currently_editing(Some(currently_editing_vec[next_index]));
+        }
     }
-    fn move_right(app: &mut App){
-        todo!()
+
+    fn input_listener (app: &mut App){
+
     }
     fn close_popup(app: &mut App){
         app.set_current_screen(CurrentScreen::Main);
@@ -38,24 +63,5 @@
         //clear the input array
         app.set_input_array(["","","","","","","","","","",""]);
         app.set_currently_editing(None);
-    }
-    fn edit_next(app: &mut App) {
-        if let Some(edit_mode) = &app.get_currently_editing() {
-            match edit_mode {
-                CurrentlyEditing::Project => app.set_currently_editing(Some(CurrentlyEditing::Size)),
-                CurrentlyEditing::Size => app.set_currently_editing(Some(CurrentlyEditing::Cost)),
-                CurrentlyEditing::Cost => app.set_currently_editing(Some(CurrentlyEditing::WholeArmy)),
-                CurrentlyEditing::WholeArmy => app.set_currently_editing(Some(CurrentlyEditing::AssemblyRequired)),
-                CurrentlyEditing::AssemblyRequired => app.set_currently_editing(Some(CurrentlyEditing::KitbashRating)),
-                CurrentlyEditing::KitbashRating => app.set_currently_editing(Some(CurrentlyEditing::PaintingLevel)),
-                CurrentlyEditing::PaintingLevel => app.set_currently_editing(Some(CurrentlyEditing::ComplexityRating)),
-                CurrentlyEditing::ComplexityRating => app.set_currently_editing(Some(CurrentlyEditing::Priority)),
-                CurrentlyEditing::Priority => app.set_currently_editing(Some(CurrentlyEditing::Status)),
-                CurrentlyEditing::Status => app.set_currently_editing(Some(CurrentlyEditing::IsOwned)),
-                CurrentlyEditing::IsOwned => app.set_currently_editing(Some(CurrentlyEditing::Project))
-            };
-        } else {
-            app.set_currently_editing(Some(CurrentlyEditing::Project));
-        }
     }
 
