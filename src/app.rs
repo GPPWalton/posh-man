@@ -9,6 +9,8 @@ use crate::{event_handlers::{handle_editing_key_event, handle_main_key_event,han
     ui::{PALETTES, TableColors, main_ui::render_main_ui, render_editing_ui,}
 };
 
+use strum_macros::EnumIter;
+
 
 fn max_width<F, T>(items: &[Project], field_fn: F) -> u16 where F: Fn(&Project) -> T, T: ToString,{
     items
@@ -38,6 +40,7 @@ pub enum CurrentScreen {
     Adding,     //when adding entry
     Exiting,    //confirmation of edit or add
 }
+#[derive(EnumIter, Clone,Copy,PartialEq)]
 pub enum CurrentlyEditing {
     Project,
     Size,
@@ -47,8 +50,8 @@ pub enum CurrentlyEditing {
     KitbashRating,
     PaintingLevel,
     ComplexityRating,
-    Priority
-    ,Status,
+    Priority,
+    Status,
     IsOwned
 }
 

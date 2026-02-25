@@ -44,21 +44,21 @@ pub fn render_editing_ui(frame: &mut Frame, app: &mut App, selected_index: usize
             .borders(Borders::NONE));
         frame.render_widget(right_arrow, outer_edit_layout[2]);
         
-        // get currently selected project,
-        let current_project = &app.get_data()[selected_index];
+
         // use currently editing enum to determine the title displayed in input block
+        //TODO: title should have fixed character space to fill so the border doesn't jump around too much
         let title = match editing {
-            CurrentlyEditing::Project => current_project.project_name(),
-            CurrentlyEditing::Size => &current_project.size().to_string(),
-            CurrentlyEditing::Cost => &current_project.cost().to_string(),
-            CurrentlyEditing::WholeArmy => &current_project.whole_army().to_string(),
-            CurrentlyEditing::AssemblyRequired => &current_project.needs_assembly().to_string(),
-            CurrentlyEditing::KitbashRating => &current_project.kitbash_rating().to_string(),
-            CurrentlyEditing::PaintingLevel => &current_project.paint_level().to_string(),
-            CurrentlyEditing::ComplexityRating => &current_project.complexity_rating().to_string(),
-            CurrentlyEditing::Priority => &current_project.priority().to_string(),
-            CurrentlyEditing::Status => &current_project.status().to_string(),
-            CurrentlyEditing::IsOwned => &current_project.is_owned().to_string(),
+            CurrentlyEditing::Project => "Project Name",
+            CurrentlyEditing::Size => "Size",
+            CurrentlyEditing::Cost => "Cost",
+            CurrentlyEditing::WholeArmy => "Whole Army/Warband",
+            CurrentlyEditing::AssemblyRequired => "Assembly Required",
+            CurrentlyEditing::KitbashRating => "Kitbash Rating",
+            CurrentlyEditing::PaintingLevel => "Painting Level",
+            CurrentlyEditing::ComplexityRating => "Complexity Rating",
+            CurrentlyEditing::Priority => "Priority",
+            CurrentlyEditing::Status => "Status",
+            CurrentlyEditing::IsOwned => "Is Owned",
         };
         //render input_block
         let input_block = Block::bordered().title(title).border_type(BorderType::Double);
