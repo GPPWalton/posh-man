@@ -931,6 +931,20 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c33a9471896f1c69cecef8d20cbe2f7accd12527ce60845ff44c153bb2a21b49"
 
 [[package]]
+name = "posh-man"
+version = "0.1.0"
+dependencies = [
+ "crossterm",
+ "csv",
+ "project",
+ "ratatui",
+ "rdev",
+ "strum 0.28.0",
+ "strum_macros 0.28.0",
+ "unicode-width",
+]
+
+[[package]]
 name = "powerfmt"
 version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -973,20 +987,6 @@ version = "0.1.0"
 dependencies = [
  "serde",
  "tabled",
-]
-
-[[package]]
-name = "project_priorities"
-version = "0.1.0"
-dependencies = [
- "crossterm",
- "csv",
- "project",
- "ratatui",
- "rdev",
- "strum 0.28.0",
- "strum_macros 0.28.0",
- "unicode-width",
 ]
 
 [[package]]

@@ -16,7 +16,6 @@ pub fn render_editing_ui(frame: &mut Frame, app: &mut App, selected_index: usize
         let editing_block = Block::bordered()
             .title("Add a new project")
             .borders(Borders::ALL)
-            // .style(Style::default().bg(Color::DarkGray))
             .border_set(border::DOUBLE);
 
         
@@ -46,7 +45,6 @@ pub fn render_editing_ui(frame: &mut Frame, app: &mut App, selected_index: usize
         
 
         // use currently editing enum to determine the title displayed in input block
-        //TODO: title should have fixed character space to fill so the border doesn't jump around too much
         let title = match editing {
             CurrentlyEditing::Project => "Project Name",
             CurrentlyEditing::Size => "Size",
