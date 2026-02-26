@@ -53,7 +53,7 @@ fn move_down(app: &mut App){
 fn select_entry(app: &mut App){
     //TODO: implement properly later
     //change colour of the selected row
-    app.set_color_index((app.get_color_index() + 1) % PALETTES.len());
+    app.set_colour_index((app.get_colour_index() + 1) % PALETTES.len());
     app.set_current_screen(CurrentScreen::Editing);
     app.set_currently_editing(Some(CurrentlyEditing::Project));
 }

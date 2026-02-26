@@ -13,7 +13,7 @@ const INFO_TEXT: [&str; 2] = [
     "<Enter> select",
 ];
 #[derive(Debug, Default)]
-pub struct TableColors {
+pub struct TableColours {
     buffer_bg: Color,
     header_bg: Color,
     header_fg: Color,
@@ -21,24 +21,24 @@ pub struct TableColors {
     selected_row_style_fg: Color,
     selected_column_style_fg: Color,
     selected_cell_style_fg: Color,
-    normal_row_color: Color,
-    alt_row_color: Color,
-    footer_border_color: Color,
+    normal_row_colour: Color,
+    alt_row_colour: Color,
+    footer_border_colour: Color,
 }
 
-impl TableColors {
-     pub const fn new(color: &tailwind::Palette) -> Self {
+impl TableColours {
+     pub const fn new(colour: &tailwind::Palette) -> Self {
         Self {
             buffer_bg: tailwind::SLATE.c950,
-            header_bg: color.c900,
+            header_bg: colour.c900,
             header_fg: tailwind::SLATE.c200,
             row_fg: tailwind::SLATE.c200,
-            selected_row_style_fg: color.c400,
-            selected_column_style_fg: color.c400,
-            selected_cell_style_fg: color.c600,
-            normal_row_color: tailwind::SLATE.c950,
-            alt_row_color: tailwind::SLATE.c900,
-            footer_border_color: color.c400,
+            selected_row_style_fg: colour.c400,
+            selected_column_style_fg: colour.c400,
+            selected_cell_style_fg: colour.c600,
+            normal_row_colour: tailwind::SLATE.c950,
+            alt_row_colour: tailwind::SLATE.c900,
+            footer_border_colour: colour.c400,
         }
     }
 }
@@ -47,28 +47,28 @@ pub fn render_main_ui(frame: &mut Frame, app: &mut App, headers: [&str;11]){
     let main_layout = &Layout::vertical([Constraint::Min(5), Constraint::Length(4)]);
     let rects = main_layout.split(frame.area());
 
-    set_colors(app);
+    set_colours(app);
 
     render_table(app,frame, rects[0],headers);
     render_scrollbar(app,frame, rects[0]);
     render_footer(app,frame, rects[1]);
 }
 
-fn set_colors(app: &mut App) {
-    app.set_colors(TableColors::new(&PALETTES[app.get_color_index()]));
+fn set_colours(app: &mut App) {
+    app.set_colours(TableColours::new(&PALETTES[app.get_colour_index()]));
 }
 
 fn render_table(app: &mut App, frame: &mut Frame, area: Rect,headers: [&str;11]) {
     let header_style = Style::default()
-        .fg(app.get_colors().header_fg)
-        .bg(app.get_colors().header_bg);
+        .fg(app.get_colours().header_fg)
+        .bg(app.get_colours().header_bg);
     let selected_row_style = Style::default()
         .add_modifier(Modifier::REVERSED)
-        .fg(app.get_colors().selected_row_style_fg);
-    let selected_col_style = Style::default().fg(app.get_colors().selected_column_style_fg);
+        .fg(app.get_colours().selected_row_style_fg);
+    let selected_col_style = Style::default().fg(app.get_colours().selected_column_style_fg);
     let selected_cell_style = Style::default()
         .add_modifier(Modifier::REVERSED)
-        .fg(app.get_colors().selected_cell_style_fg);
+        .fg(app.get_colours().selected_cell_style_fg);
 
     let header = headers
         .into_iter()
@@ -78,16 +78,16 @@ fn render_table(app: &mut App, frame: &mut Frame, area: Rect,headers: [&str;11])
         .style(header_style)
         .height(3);
     let rows = app.get_data().iter().enumerate().map(|(i, data)| {
-        let color = match i % 2 {
-            0 => app.get_colors().normal_row_color,
-            _ => app.get_colors().alt_row_color,
+        let colour = match i % 2 {
+            0 => app.get_colours().normal_row_colour,
+            _ => app.get_colours().alt_row_colour,
         };
         let item = data.as_str_array();
         //TODO: consider centering each column beyond the first, use slice?
         item.into_iter()
             .map(|content| Cell::from(Text::from(process_cell_content(content, CELL_WRAP_LIMIT))))
             .collect::<Row>()
-            .style(Style::new().fg(app.get_colors().row_fg).bg(color))
+            .style(Style::new().fg(app.get_colours().row_fg).bg(colour))
             .height(4)
     });
     let bar = " █ ";
@@ -118,7 +118,7 @@ fn render_table(app: &mut App, frame: &mut Frame, area: Rect,headers: [&str;11])
         bar.into(),
         "".into(),
     ]))
-    .bg(app.get_colors().buffer_bg)
+    .bg(app.get_colours().buffer_bg)
     .highlight_spacing(HighlightSpacing::Always);
     frame.render_stateful_widget(t, area, app.get_mut_table_state());
 }
@@ -141,14 +141,14 @@ fn render_footer(app: &mut App, frame: &mut Frame, area: Rect) {
     let info_footer = Paragraph::new(Text::from_iter(INFO_TEXT))
         .style(
             Style::new()
-                .fg(app.get_colors().row_fg)
-                .bg(app.get_colors().buffer_bg),
+                .fg(app.get_colours().row_fg)
+                .bg(app.get_colours().buffer_bg),
         )
         .centered()
         .block(
             Block::bordered()
                 .border_type(BorderType::Double)
-                .border_style(Style::new().fg(app.get_colors().footer_border_color)),
+                .border_style(Style::new().fg(app.get_colours().footer_border_colour)),
         );
     frame.render_widget(info_footer, area);
 }
