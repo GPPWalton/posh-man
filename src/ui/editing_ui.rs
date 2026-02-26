@@ -4,7 +4,7 @@ use ratatui::{Frame, style::Style, style::Stylize, symbols::border,widgets::Widg
 use crate::app::App;
 
 const INFO_TEXT: [&str; 2] = [
-    "<C> Cancel | <←> Previous Attribute | <→> Next Attribute",
+    "<Ctrl+C> Cancel | <←> Previous Attribute | <→> Next Attribute",
     "<Enter> Confirm",
 ];
 const INPUT_WIDTH: u16 = 15;

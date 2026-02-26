@@ -12,10 +12,9 @@
     //TODO: implement event_handling for editing pop-up
     pub fn handle_editing_key_event( app: &mut App, key_event: KeyEvent){
         match key_event.code {
-            //TODO: change keycode to Ctrl+C or Esc
-            KeyCode::Char('c') => close_popup(app),
-            KeyCode::Left => move_to(StepDirection::Left,app),
-            KeyCode::Right => move_to(StepDirection::Right,app),
+            KeyCode::Char('c') => if key_event.modifiers.contains(KeyModifiers::CONTROL) {close_popup(app)},
+            KeyCode::Left => move_to(StepDirection::Left, app),
+            KeyCode::Right => move_to(StepDirection::Right, app),
             KeyCode::Enter => confirm(app),
             _ => {}
         }
@@ -47,7 +46,7 @@
     fn close_popup(app: &mut App){
         app.set_current_screen(CurrentScreen::Main);
         //change colour of selected row back to 'unselected' colour
-        app.set_color_index((app.get_color_index() + 1) % PALETTES.len());
+        app.set_colour_index((app.get_colour_index() + 1) % PALETTES.len());
     }
     fn confirm(app: &mut App){
         todo!()

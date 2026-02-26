@@ -1,5 +1,5 @@
 
-use crossterm::event::{self, Event as crossEvent, KeyCode, KeyEvent, KeyEventKind};
+use crossterm::event::{self, Event as crossEvent, KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
 use std::io;
 pub mod main_handlers;
 pub mod editing_handlers;

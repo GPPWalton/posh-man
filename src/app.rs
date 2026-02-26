@@ -6,7 +6,7 @@ use ratatui::{
 };
 use unicode_width::UnicodeWidthStr;
 use crate::{event_handlers::{handle_editing_key_event, handle_main_key_event,handle_events},
-    ui::{PALETTES, TableColors, main_ui::render_main_ui, render_editing_ui,}
+    ui::{PALETTES, TableColours, main_ui::render_main_ui, render_editing_ui,}
 };
 
 use strum_macros::EnumIter;
@@ -27,8 +27,8 @@ pub struct App <'a>{
     exit: bool,
     longest_item_lens: [u16;11],
     scroll_state: ScrollbarState,
-    colors: TableColors,
-    color_index: usize,
+    colours: TableColours,
+    colour_index: usize,
     current_screen: CurrentScreen,
     currently_editing: Option<CurrentlyEditing>,
     input_array: [&'a str;11],
@@ -64,8 +64,8 @@ impl<'a> App<'a> {
             data: data,
             exit: false,
             scroll_state: ScrollbarState::default(),
-            colors: TableColors::new(&PALETTES[0]),
-            color_index: 0,
+            colours: TableColours::new(&PALETTES[0]),
+            colour_index: 0,
             current_screen: CurrentScreen::Main,
             currently_editing: None,
             input_array: ["","","","","","","","","","",""],
@@ -123,8 +123,8 @@ impl<'a> App<'a> {
     pub fn get_exit(&self) -> bool {self.exit}
     pub fn get_longest_item_lens(&self) -> &[u16; 11] {&self.longest_item_lens}
     pub fn get_scroll_state(&self) -> &ScrollbarState {&self.scroll_state}
-    pub fn get_colors(&self) -> &TableColors {&self.colors}
-    pub fn get_color_index(&self) -> usize {self.color_index}
+    pub fn get_colours(&self) -> &TableColours {&self.colours}
+    pub fn get_colour_index(&self) -> usize {self.colour_index}
     pub fn get_current_screen(&self) -> &CurrentScreen {&self.current_screen}
     pub fn get_currently_editing(&self) -> &Option<CurrentlyEditing> {&self.currently_editing}
     pub fn get_input_array(&self) -> &[&'a str; 11] {&self.input_array}
@@ -140,8 +140,8 @@ impl<'a> App<'a> {
     pub fn set_scroll_state(&mut self, scroll_state: ScrollbarState) {self.scroll_state = scroll_state;}
     pub fn set_input_array(&mut self, input_array: [&'a str; 11]) {self.input_array = input_array;}
     pub fn set_exit(&mut self, exit: bool) {self.exit = exit;}
-    pub fn set_colors(&mut self, colors: TableColors) {self.colors = colors;}
-    pub fn set_color_index(&mut self, color_index: usize) {self.color_index = color_index;}
+    pub fn set_colours(&mut self, colours: TableColours) {self.colours = colours;}
+    pub fn set_colour_index(&mut self, colour_index: usize) {self.colour_index = colour_index;}
     pub fn set_current_screen(&mut self, current_screen: CurrentScreen) {self.current_screen = current_screen;}
     pub fn set_currently_editing(&mut self, currently_editing: Option<CurrentlyEditing>) {self.currently_editing = currently_editing;}
 }
