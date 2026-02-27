@@ -12,9 +12,14 @@
     //TODO: implement event_handling for editing pop-up
     pub fn handle_editing_key_event( app: &mut App, key_event: KeyEvent){
         match key_event.code {
-            KeyCode::Char('c') => if key_event.modifiers.contains(KeyModifiers::CONTROL) {close_popup(app)},
-            KeyCode::Left => move_to(StepDirection::Left, app),
-            KeyCode::Right => move_to(StepDirection::Right, app),
+            KeyCode::Esc => close_popup(app),
+            //TODO: use KeyCode::Tab => {} and shift tab for left and right instead
+            KeyCode::BackTab => move_to(StepDirection::Left, app),
+            KeyCode::Tab => move_to(StepDirection::Right, app),
+            //TODO:  implement cursor and changing input position with left and right
+            // KeyCode::Left => todo!(),
+            // KeyCode::Right => todo!(),
+            //TODO: enter should also shift to next attr, then confirm at the end before closing pup-up
             KeyCode::Enter => confirm(app),
             _ => {}
         }

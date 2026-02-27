@@ -1,15 +1,14 @@
 use crate::{app::CurrentlyEditing, ui::*};
-use ratatui::{Frame, style::Style, style::Stylize, symbols::border,widgets::Widget, widgets::{Block, BorderType, Borders, Paragraph}
+use ratatui::{Frame, symbols::border, widgets::{Block, BorderType, Borders, Paragraph}
 };
 use crate::app::App;
 
 const INFO_TEXT: [&str; 2] = [
-    "<Ctrl+C> Cancel | <←> Previous Attribute | <→> Next Attribute",
+    "<Esc> Cancel | <Shift+Tab> Previous Attribute | <Tab> Next Attribute",
     "<Enter> Confirm",
 ];
 const INPUT_WIDTH: u16 = 15;
 
-//TODO: editing_ui event handlers
 pub fn render_editing_ui(frame: &mut Frame, app: &mut App, selected_index: usize) {
     if let Some(editing) = &app.get_currently_editing() {
         let area = centered_rect(50, 50, frame.area());
