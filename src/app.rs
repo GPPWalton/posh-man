@@ -31,6 +31,7 @@ pub struct App <'a>{
     colour_index: usize,
     current_screen: CurrentScreen,
     currently_editing: Option<CurrentlyEditing>,
+    //TODO: Hashmap instead?
     input_array: [&'a str;11],
 }
 
@@ -92,8 +93,6 @@ impl<'a> App<'a> {
                     handle_events(self,handle_main_key_event)?;},
                 CurrentScreen::Exiting => todo!()
             }
-
-            // handle_events()?;
         }
         Ok(())
     }
