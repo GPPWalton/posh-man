@@ -2,7 +2,7 @@ use crate::{app::{CurrentScreen, CurrentlyEditing}, event_handlers::*};
 
 pub fn handle_main_key_event( app: &mut App, key_event: KeyEvent) {
     match key_event.code {
-        KeyCode::Char('q') => exit(app),
+        KeyCode::Esc => exit(app),
         KeyCode::Up => move_up(app),
         KeyCode::Down => move_down(app),
         KeyCode::Enter => select_entry(app),
