@@ -9,7 +9,7 @@ const CELL_WRAP_LIMIT: u16 = 16;
 const CELL_PADDING: u16 = 1;
 const HEADER_WRAP_LIMIT: u16 = 10;
 const INFO_TEXT: [&str; 2] = [
-    "<Q> quit | <↑> move up | <↓> move down",
+    "<Esc> quit | <↑> move up | <↓> move down",
     "<Enter> select",
 ];
 #[derive(Debug, Default)]

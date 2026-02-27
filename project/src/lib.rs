@@ -1,8 +1,9 @@
 pub mod project{
     use std::{error::Error, fmt, str::FromStr, u8};
 
-    #[derive(Debug, serde::Serialize, serde::Deserialize,Copy,Clone)]
+    #[derive(Debug, serde::Serialize, serde::Deserialize,Copy,Clone,PartialEq)]
     pub enum Cost{
+        //TODO: use strum or assign values?
         None,
         Low,
         Medium,
@@ -37,7 +38,7 @@ pub mod project{
             write!(f, "{}", self.to_string())
         }
     }
-    #[derive(Debug, serde::Serialize, serde::Deserialize,Copy,Clone)]
+    #[derive(Debug, serde::Serialize, serde::Deserialize,Copy,Clone,PartialEq)]
     pub enum PaintLevel{
         Simple,
         Battle,

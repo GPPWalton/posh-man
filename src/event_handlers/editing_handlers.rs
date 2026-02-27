@@ -1,4 +1,3 @@
-
     use super::*;
     use project::project::Project;
     use crate::app::{CurrentScreen, CurrentlyEditing};
@@ -13,7 +12,6 @@
     pub fn handle_editing_key_event( app: &mut App, key_event: KeyEvent){
         match key_event.code {
             KeyCode::Esc => close_popup(app),
-            //TODO: use KeyCode::Tab => {} and shift tab for left and right instead
             KeyCode::BackTab => move_to(StepDirection::Left, app),
             KeyCode::Tab => move_to(StepDirection::Right, app),
             //TODO:  implement cursor and changing input position with left and right
@@ -21,6 +19,8 @@
             // KeyCode::Right => todo!(),
             //TODO: enter should also shift to next attr, then confirm at the end before closing pup-up
             KeyCode::Enter => confirm(app),
+            KeyCode::Backspace => delete_char(app),
+            KeyCode::Char(value) => insert_char(value,app),
             _ => {}
         }
     }
@@ -31,6 +31,7 @@
             //find index of the current value of the enum
             let current_index = match currently_editing_vec.iter().position(|v| v == edit_mode){
                 Some(i) => i,
+                //TODO: this actually triggers currently! Since movement can happen before value saved? Sort this!
                 None => panic!("CurrentlyEditing value not found in vector")
             };
             let len = currently_editing_vec.len();
@@ -41,12 +42,86 @@
                 StepDirection::Right => (current_index + 1) % len,
             };
 
-            app.set_currently_editing(Some(currently_editing_vec[next_index]));
+            //might be a better way to do this
+            app.set_currently_editing(Some(currently_editing_vec[next_index].clone()));
         }
     }
 
-    fn input_listener (app: &mut App){
+    fn delete_char(app: &mut App){
+        if let Some(editing) = &mut app.get_mut_currently_editing() {
+            match editing {
+                //TODO: not great requires array order to be preserved
+                CurrentlyEditing::Project(current_input) => current_input.pop(),
+                CurrentlyEditing::Size(current_input) => current_input.pop(),
+                CurrentlyEditing::Cost(current_input) => current_input.pop(),
+                CurrentlyEditing::WholeArmy(current_input) => current_input.pop(),
+                CurrentlyEditing::AssemblyRequired(current_input) => current_input.pop(),
+                CurrentlyEditing::KitbashRating(current_input) => current_input.pop(),
+                CurrentlyEditing::PaintingLevel(current_input) => current_input.pop(),
+                CurrentlyEditing::ComplexityRating(current_input) => current_input.pop(),
+                CurrentlyEditing::Priority(current_input) => current_input.pop(),
+                CurrentlyEditing::Status(current_input) => current_input.pop(),
+                CurrentlyEditing::IsOwned(current_input) => current_input.pop()
+            };
+        }
+    }
+    fn insert_char(value: char, app: &mut App) {
+        // Step 1: Get the current editing state (mutable borrow starts and ends here)
+        let new_input = if let Some(editing) = app.get_mut_currently_editing() {
+            match editing {
+                CurrentlyEditing::Project(current_input) => {
+                    current_input.push(value);
+                    Some(CurrentlyEditing::Project(current_input.clone()))
+                },
+                CurrentlyEditing::Size(current_input) => {
+                    current_input.push(value);
+                    Some(CurrentlyEditing::Size(current_input.clone()))
+                },
+                CurrentlyEditing::Cost(current_input) => {
+                    current_input.push(value);
+                    Some(CurrentlyEditing::Cost(current_input.clone()))
+                },
+                CurrentlyEditing::WholeArmy(current_input) => {
+                    current_input.push(value);
+                    Some(CurrentlyEditing::WholeArmy(current_input.clone()))
+                },
+                CurrentlyEditing::AssemblyRequired(current_input) => {
+                    current_input.push(value);
+                    Some(CurrentlyEditing::AssemblyRequired(current_input.clone()))
+                },
+                CurrentlyEditing::KitbashRating(current_input) => {
+                    current_input.push(value);
+                    Some(CurrentlyEditing::KitbashRating(current_input.clone()))
+                },
+                CurrentlyEditing::PaintingLevel(current_input) => {
+                    current_input.push(value);
+                    Some(CurrentlyEditing::PaintingLevel(current_input.clone()))
+                },
+                CurrentlyEditing::ComplexityRating(current_input) => {
+                    current_input.push(value);
+                    Some(CurrentlyEditing::ComplexityRating(current_input.clone()))
+                },
+                CurrentlyEditing::Priority(current_input) => {
+                    current_input.push(value);
+                    Some(CurrentlyEditing::Priority(current_input.clone()))
+                },
+                CurrentlyEditing::Status(current_input) => {
+                    current_input.push(value);
+                    Some(CurrentlyEditing::Status(current_input.clone()))
+                },
+                CurrentlyEditing::IsOwned(current_input) => {
+                    current_input.push(value);
+                    Some(CurrentlyEditing::IsOwned(current_input.clone()))
+                }
+            }
+        } else {
+            return; // or handle no editing state
+        };
 
+        // Step 2: Now safely call set_currently_editing (new mutable borrow)
+        if let Some(input) = new_input {
+            app.set_currently_editing(Some(input));
+        }
     }
     fn close_popup(app: &mut App){
         app.set_current_screen(CurrentScreen::Main);
@@ -56,16 +131,16 @@
     fn confirm(app: &mut App){
         todo!()
     }
-    fn save_input (app: &mut App) {
-        //add new project to data vector based on input array
-        let new_record = match Project::from_arr(app.get_input_array()) {
-            Ok(input) =>input,
-            Err(e) => panic!("the following error occured on input {:?}",e),
-        };
-        app.get_mut_data().push(new_record);
+    // fn save_input (app: &mut App) {
+    //     //add new project to data vector based on input array
+    //     let new_record = match Project::from_arr(app.get_input_array()) {
+    //         Ok(input) =>input,
+    //         Err(e) => panic!("the following error occured on input {:?}",e),
+    //     };
+    //     app.get_mut_data().push(new_record);
 
-        //clear the input array
-        app.set_input_array(["","","","","","","","","","",""]);
-        app.set_currently_editing(None);
-    }
+    //     //clear the input array
+    //     app.set_input_array(["","","","","","","","","","",""]);
+    //     app.set_currently_editing(None);
+    // }
 

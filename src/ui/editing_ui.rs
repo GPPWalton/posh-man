@@ -41,26 +41,41 @@ pub fn render_editing_ui(frame: &mut Frame, app: &mut App, selected_index: usize
         let right_arrow =Paragraph::new("→").block(Block::default()
             .borders(Borders::NONE));
         frame.render_widget(right_arrow, outer_edit_layout[2]);
-        
 
         // use currently editing enum to determine the title displayed in input block
         let title = match editing {
-            CurrentlyEditing::Project => "Project Name",
-            CurrentlyEditing::Size => "Size",
-            CurrentlyEditing::Cost => "Cost",
-            CurrentlyEditing::WholeArmy => "Whole Army/Warband",
-            CurrentlyEditing::AssemblyRequired => "Assembly Required",
-            CurrentlyEditing::KitbashRating => "Kitbash Rating",
-            CurrentlyEditing::PaintingLevel => "Painting Level",
-            CurrentlyEditing::ComplexityRating => "Complexity Rating",
-            CurrentlyEditing::Priority => "Priority",
-            CurrentlyEditing::Status => "Status",
-            CurrentlyEditing::IsOwned => "Is Owned",
+            CurrentlyEditing::Project(_) => "Project Name",
+            CurrentlyEditing::Size(_) => "Size",
+            CurrentlyEditing::Cost(_) => "Cost",
+            CurrentlyEditing::WholeArmy(_) => "Whole Army/Warband",
+            CurrentlyEditing::AssemblyRequired(_) => "Assembly Required",
+            CurrentlyEditing::KitbashRating(_) => "Kitbash Rating",
+            CurrentlyEditing::PaintingLevel(_) => "Painting Level",
+            CurrentlyEditing::ComplexityRating(_) => "Complexity Rating",
+            CurrentlyEditing::Priority(_) => "Priority",
+            CurrentlyEditing::Status(_) => "Status",
+            CurrentlyEditing::IsOwned(_) => "Is Owned",
         };
         //render input_block
         let input_block = Block::bordered().title(title).border_type(BorderType::Double);
-        frame.render_widget(input_block, inner_edit_layout[0]);
-        //TODO: flashing cursor?
+        if let Some(edit_mode) = app.get_currently_editing(){
+            let input_text =match edit_mode {
+            CurrentlyEditing::Project(current_input) => current_input,
+            CurrentlyEditing::Size(current_input) => current_input,
+            CurrentlyEditing::Cost(current_input) => current_input,
+            CurrentlyEditing::WholeArmy(current_input) => current_input,
+            CurrentlyEditing::AssemblyRequired(current_input) => current_input,
+            CurrentlyEditing::KitbashRating(current_input) => current_input,
+            CurrentlyEditing::PaintingLevel(current_input) => current_input,
+            CurrentlyEditing::ComplexityRating(current_input) => current_input,
+            CurrentlyEditing::Priority(current_input) => current_input,
+            CurrentlyEditing::Status(current_input) => current_input,
+            CurrentlyEditing::IsOwned(current_input) => current_input,
+           };
+           let input_field = Paragraph::new(Text::from(input_text.to_string())).block(input_block);
+            frame.render_widget(input_field, inner_edit_layout[0]);
+        }
+        //TODO: flashing cursor!
         let input_footer = Paragraph::new(Text::from_iter(INFO_TEXT));
         frame.render_widget(input_footer, inner_edit_layout[1]);
     }
