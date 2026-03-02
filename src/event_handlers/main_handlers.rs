@@ -59,8 +59,10 @@ fn select_entry(app: &mut App){
         Some(i) => i,
         None => panic!("No row selected")
     };
-    let unedited_name = app.get_data()[selected_index].project_name().to_string();
-    app.set_currently_editing(Some(CurrentlyEditing::Project(unedited_name)));
+
+    //load record into input for editing
+    app.set_input_array(app.get_data()[selected_index].as_str_array());
+    app.set_currently_editing(Some(CurrentlyEditing::Project("".to_string())));
 }
 
 #[cfg(test)]

@@ -31,6 +31,7 @@ pub struct App {
     colour_index: usize,
     current_screen: CurrentScreen,
     currently_editing: Option<CurrentlyEditing>,
+    input_array : [String; 11]
 }
 
 pub enum CurrentScreen {
@@ -41,6 +42,8 @@ pub enum CurrentScreen {
 }
 
 #[derive(EnumIter, Clone,PartialEq)]
+
+//TODO: remove datatype from this enum as tried and failed to implement it this way
 pub enum CurrentlyEditing {
     Project(String),
     Size(String),
@@ -68,14 +71,25 @@ impl App {
             colour_index: 0,
             current_screen: CurrentScreen::Main,
             currently_editing: None,
+            input_array: [
+                "".to_string(),
+                "".to_string(),
+                "".to_string(),
+                "".to_string(),
+                "".to_string(),
+                "".to_string(),
+                "".to_string(),
+                "".to_string(),
+                "".to_string(),
+                "".to_string(),
+                "".to_string(),
+            ]
         }
     }
 
     /// runs the application's main loop until the user quits
     pub fn run(&mut self, terminal: &mut DefaultTerminal, headers: [&str;11]) -> io::Result<()> {
         while !self.exit {
-            //main loop goes here
-                        
             match self.get_current_screen() {
                 CurrentScreen::Adding => todo!(),
                 CurrentScreen::Editing => {
@@ -124,12 +138,14 @@ impl App {
     pub fn get_colour_index(&self) -> usize {self.colour_index}
     pub fn get_current_screen(&self) -> &CurrentScreen {&self.current_screen}
     pub fn get_currently_editing(&self) -> &Option<CurrentlyEditing> {&self.currently_editing}
+    pub fn get_input_array(&self) -> &[String;11] {&self.input_array}
 
     //mutable getters for states and the data, as fully setting it might not be appropriate
     pub fn get_mut_table_state(&mut self) -> &mut TableState {&mut self.table_state}
     pub fn get_mut_scroll_state(&mut self) -> &mut ScrollbarState {&mut self.scroll_state}
     pub fn get_mut_data(&mut self) -> &mut Vec<Project> {&mut self.data}
     pub fn get_mut_currently_editing(&mut self) -> &mut Option<CurrentlyEditing> {& mut self.currently_editing}
+    pub fn get_mut_input_array(&mut self) -> &mut [String;11] {&mut self.input_array}
 
     //setters
     pub fn set_table_state(&mut self, table_state: TableState) {self.table_state = table_state;}
@@ -140,4 +156,5 @@ impl App {
     pub fn set_colour_index(&mut self, colour_index: usize) {self.colour_index = colour_index;}
     pub fn set_current_screen(&mut self, current_screen: CurrentScreen) {self.current_screen = current_screen;}
     pub fn set_currently_editing(&mut self, currently_editing: Option<CurrentlyEditing>) {self.currently_editing = currently_editing;}
+    pub fn set_input_array(&mut self, input: [String;11]) {self.input_array = input}
 }
