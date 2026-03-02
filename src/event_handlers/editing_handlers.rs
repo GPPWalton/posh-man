@@ -31,7 +31,6 @@
             //find index of the current value of the enum
             let current_index = match currently_editing_vec.iter().position(|v| v == edit_mode){
                 Some(i) => i,
-                //TODO: this actually triggers currently! Since movement can happen before value saved? Sort this!
                 None => panic!("CurrentlyEditing value not found in vector")
             };
             let len = currently_editing_vec.len();
@@ -47,10 +46,10 @@
         }
     }
 
+    //TODO: needs reworking now input method was reverted
     fn delete_char(app: &mut App){
         if let Some(editing) = &mut app.get_mut_currently_editing() {
             match editing {
-                //TODO: not great requires array order to be preserved
                 CurrentlyEditing::Project(current_input) => current_input.pop(),
                 CurrentlyEditing::Size(current_input) => current_input.pop(),
                 CurrentlyEditing::Cost(current_input) => current_input.pop(),
@@ -65,6 +64,7 @@
             };
         }
     }
+    //TODO: needs reworking now input method was reverted
     fn insert_char(value: char, app: &mut App) {
         // Step 1: Get the current editing state (mutable borrow starts and ends here)
         let new_input = if let Some(editing) = app.get_mut_currently_editing() {
