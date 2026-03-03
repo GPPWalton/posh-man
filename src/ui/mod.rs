@@ -1,4 +1,4 @@
-use ratatui::{style::{palette::tailwind, Color},
+use ratatui::{style::{palette::tailwind},
      text::{Line, Text},
      layout::{Direction,Constraint,Layout,Rect}
 };

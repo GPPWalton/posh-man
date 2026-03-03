@@ -11,6 +11,7 @@ pub fn handle_main_key_event( app: &mut App, key_event: KeyEvent) {
 }
 
 fn exit(app: &mut App) {
+    //TODO: save changes if they exist: write table back to file
     app.set_exit(true);
     app.set_current_screen(CurrentScreen::Main);
 }
@@ -55,14 +56,11 @@ fn select_entry(app: &mut App){
     app.set_colour_index((app.get_colour_index() + 1) % PALETTES.len());
     app.set_current_screen(CurrentScreen::Editing);
     //get index of selected row
-    let selected_index = match app.get_mut_table_state().selected() {
-        Some(i) => i,
-        None => panic!("No row selected")
-    };
+    let selected_index = app.get_selected_index();
 
     //load record into input for editing
     app.set_input_array(app.get_data()[selected_index].as_str_array());
-    app.set_currently_editing(Some(CurrentlyEditing::Project("".to_string())));
+    app.set_currently_editing(Some(CurrentlyEditing::Project));
 }
 
 #[cfg(test)]
