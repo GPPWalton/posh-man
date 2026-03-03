@@ -45,17 +45,17 @@ pub enum CurrentScreen {
 
 //TODO: remove datatype from this enum as tried and failed to implement it this way
 pub enum CurrentlyEditing {
-    Project(String),
-    Size(String),
-    Cost(String),
-    WholeArmy(String),
-    AssemblyRequired(String),
-    KitbashRating(String),
-    PaintingLevel(String),
-    ComplexityRating(String),
-    Priority(String),
-    Status(String),
-    IsOwned(String)
+    Project,
+    Size,
+    Cost,
+    WholeArmy,
+    AssemblyRequired,
+    KitbashRating,
+    PaintingLevel,
+    ComplexityRating,
+    Priority,
+    Status,
+    IsOwned
 }
 
 impl App {
@@ -93,11 +93,7 @@ impl App {
             match self.get_current_screen() {
                 CurrentScreen::Adding => todo!(),
                 CurrentScreen::Editing => {
-                    let selected_index = match self.get_table_state().selected(){
-                        Some(i)=> i,
-                        None => panic!("No entry selected")
-                    };
-                    terminal.draw(|frame| render_editing_ui(frame, self,selected_index))?;
+                    terminal.draw(|frame| render_editing_ui(frame, self))?;
                     handle_events(self,handle_editing_key_event)?;
                 },
                 CurrentScreen::Main => {
@@ -126,7 +122,14 @@ impl App {
         ]
 
     
-}
+    }
+
+    pub fn get_selected_index(&mut self) -> usize{
+        match self.get_mut_table_state().selected() {
+        Some(i) => return i,
+        None => panic!("No row selected")
+    };
+    }
 
     //getters
     pub fn get_table_state(&self) -> &TableState {&self.table_state}

@@ -3,7 +3,6 @@ pub mod project{
 
     #[derive(Debug, serde::Serialize, serde::Deserialize,Copy,Clone,PartialEq)]
     pub enum Cost{
-        //TODO: use strum or assign values?
         None,
         Low,
         Medium,
@@ -44,7 +43,7 @@ pub mod project{
         Battle,
         Character,
     }
-    //TODO: perhaps condense this and the one for Cost into a single function?
+    //TODO: perhaps condense this and the one for Cost into a single function? 
     impl PaintLevel {
         pub fn to_string(&self) -> String {
             match self {
@@ -146,17 +145,17 @@ pub mod project{
             self.complexity_rating().to_string(),
             self.priority().to_string(),self.status.to_string(),self.is_owned().to_string()]
         }
-        pub fn from_arr(separated_items: &[&str;11]) -> Result<Project, Box<dyn Error>> {
+        pub fn from_arr(separated_items: &[String;11]) -> Result<Project, Box<dyn Error>> {
             Ok(Project { project_name: separated_items[0].to_string(),
                 //TODO: handle trimming whitespace and value size-constraints at input for simplicity
                 size: separated_items[1].parse::<u8>()?,
-                cost: Cost::from_str(separated_items[2])?,
+                cost: Cost::from_str(separated_items[2].as_str())?,
                 //TODO: handle lowercasing at input?
                 whole_army: separated_items[3].to_lowercase().parse::<bool>()?,
                 needs_assembly: separated_items[4].to_lowercase().parse::<bool>()?,
                 //TODO: not here, but should normalise kitbash rating to specific range 1-5?
                 kitbash_rating: separated_items[5].parse::<u8>()?,
-                paint_level: PaintLevel::from_str(separated_items[6])?,
+                paint_level: PaintLevel::from_str(separated_items[6].as_str())?,
                 complexity_rating: separated_items[7].parse::<f64>()?,
                 priority: separated_items[8].parse::<f64>()?,
                 status: separated_items[9].parse::<bool>()?,
