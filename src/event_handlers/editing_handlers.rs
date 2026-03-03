@@ -21,7 +21,7 @@
             KeyCode::Enter => confirm(app),
             KeyCode::Backspace => delete_char(app),
             KeyCode::Char(value) => insert_char(value,app),
-            _ => {}
+            _ =>{}
         }
     }
     fn move_to(direction: StepDirection,app: &mut App){
@@ -50,78 +50,39 @@
     fn delete_char(app: &mut App){
         if let Some(editing) = &mut app.get_mut_currently_editing() {
             match editing {
-                CurrentlyEditing::Project(current_input) => current_input.pop(),
-                CurrentlyEditing::Size(current_input) => current_input.pop(),
-                CurrentlyEditing::Cost(current_input) => current_input.pop(),
-                CurrentlyEditing::WholeArmy(current_input) => current_input.pop(),
-                CurrentlyEditing::AssemblyRequired(current_input) => current_input.pop(),
-                CurrentlyEditing::KitbashRating(current_input) => current_input.pop(),
-                CurrentlyEditing::PaintingLevel(current_input) => current_input.pop(),
-                CurrentlyEditing::ComplexityRating(current_input) => current_input.pop(),
-                CurrentlyEditing::Priority(current_input) => current_input.pop(),
-                CurrentlyEditing::Status(current_input) => current_input.pop(),
-                CurrentlyEditing::IsOwned(current_input) => current_input.pop()
+                CurrentlyEditing::Project(_) => app.get_mut_input_array()[0].pop(),
+                CurrentlyEditing::Size(_) => app.get_mut_input_array()[1].pop(),
+                CurrentlyEditing::Cost(_) => app.get_mut_input_array()[2].pop(),
+                CurrentlyEditing::WholeArmy(_) => app.get_mut_input_array()[3].pop(),
+                CurrentlyEditing::AssemblyRequired(_) => app.get_mut_input_array()[4].pop(),
+                CurrentlyEditing::KitbashRating(_) => app.get_mut_input_array()[5].pop(),
+                CurrentlyEditing::PaintingLevel(_) => app.get_mut_input_array()[6].pop(),
+                CurrentlyEditing::ComplexityRating(_) => app.get_mut_input_array()[7].pop(),
+                CurrentlyEditing::Priority(_) => app.get_mut_input_array()[8].pop(),
+                CurrentlyEditing::Status(_) => app.get_mut_input_array()[9].pop(),
+                CurrentlyEditing::IsOwned(_) => app.get_mut_input_array()[10].pop()
             };
         }
     }
     //TODO: needs reworking now input method was reverted
     fn insert_char(value: char, app: &mut App) {
         // Step 1: Get the current editing state (mutable borrow starts and ends here)
-        let new_input = if let Some(editing) = app.get_mut_currently_editing() {
+        if let Some(editing) = app.get_mut_currently_editing() {
             match editing {
-                CurrentlyEditing::Project(current_input) => {
-                    current_input.push(value);
-                    Some(CurrentlyEditing::Project(current_input.clone()))
-                },
-                CurrentlyEditing::Size(current_input) => {
-                    current_input.push(value);
-                    Some(CurrentlyEditing::Size(current_input.clone()))
-                },
-                CurrentlyEditing::Cost(current_input) => {
-                    current_input.push(value);
-                    Some(CurrentlyEditing::Cost(current_input.clone()))
-                },
-                CurrentlyEditing::WholeArmy(current_input) => {
-                    current_input.push(value);
-                    Some(CurrentlyEditing::WholeArmy(current_input.clone()))
-                },
-                CurrentlyEditing::AssemblyRequired(current_input) => {
-                    current_input.push(value);
-                    Some(CurrentlyEditing::AssemblyRequired(current_input.clone()))
-                },
-                CurrentlyEditing::KitbashRating(current_input) => {
-                    current_input.push(value);
-                    Some(CurrentlyEditing::KitbashRating(current_input.clone()))
-                },
-                CurrentlyEditing::PaintingLevel(current_input) => {
-                    current_input.push(value);
-                    Some(CurrentlyEditing::PaintingLevel(current_input.clone()))
-                },
-                CurrentlyEditing::ComplexityRating(current_input) => {
-                    current_input.push(value);
-                    Some(CurrentlyEditing::ComplexityRating(current_input.clone()))
-                },
-                CurrentlyEditing::Priority(current_input) => {
-                    current_input.push(value);
-                    Some(CurrentlyEditing::Priority(current_input.clone()))
-                },
-                CurrentlyEditing::Status(current_input) => {
-                    current_input.push(value);
-                    Some(CurrentlyEditing::Status(current_input.clone()))
-                },
-                CurrentlyEditing::IsOwned(current_input) => {
-                    current_input.push(value);
-                    Some(CurrentlyEditing::IsOwned(current_input.clone()))
-                }
+                CurrentlyEditing::Project(_) => app.get_mut_input_array()[0].push(value),
+                CurrentlyEditing::Size(_) => app.get_mut_input_array()[1].push(value),
+                CurrentlyEditing::Cost(_) => app.get_mut_input_array()[2].push(value),
+                CurrentlyEditing::WholeArmy(_) => app.get_mut_input_array()[3].push(value),
+                CurrentlyEditing::AssemblyRequired(_) => app.get_mut_input_array()[4].push(value),
+                CurrentlyEditing::KitbashRating(_) => app.get_mut_input_array()[5].push(value),
+                CurrentlyEditing::PaintingLevel(_) => app.get_mut_input_array()[6].push(value),
+                CurrentlyEditing::ComplexityRating(_) => app.get_mut_input_array()[7].push(value),
+                CurrentlyEditing::Priority(_) => app.get_mut_input_array()[8].push(value),
+                CurrentlyEditing::Status(_) => app.get_mut_input_array()[9].push(value),
+                CurrentlyEditing::IsOwned(_) => app.get_mut_input_array()[10].push(value)
             }
-        } else {
-            return; // or handle no editing state
-        };
-
-        // Step 2: Now safely call set_currently_editing (new mutable borrow)
-        if let Some(input) = new_input {
-            app.set_currently_editing(Some(input));
         }
+        
     }
     fn close_popup(app: &mut App){
         app.set_current_screen(CurrentScreen::Main);
