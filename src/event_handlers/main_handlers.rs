@@ -1,3 +1,4 @@
+use std::fs::File;
 use crate::{app::{CurrentScreen, CurrentlyEditing}, event_handlers::*};
 
 pub fn handle_main_key_event( app: &mut App, key_event: KeyEvent) {
@@ -12,7 +13,7 @@ pub fn handle_main_key_event( app: &mut App, key_event: KeyEvent) {
 }
 
 fn exit(app: &mut App) {
-    //TODO: save changes if they exist: write table back to file
+    let _test = save_data(app, "test_priorities.csv".to_string());
     app.set_exit(true);
     app.set_current_screen(CurrentScreen::Main);
 }
@@ -75,6 +76,24 @@ fn add_new_entry (app: &mut App){
     app.set_currently_editing(Some(CurrentlyEditing::Project));
 }
 
+//TODO: handle ? shortcut so I don't need to return a result
+fn save_data(app: &mut App, file_path: String)-> Result<(), Box<dyn std::error::Error>>{
+    match File::create(&file_path){
+        Ok(_)=>{
+            let mut wtr = match csv::Writer::from_path(&file_path){
+                Ok( wtr) => wtr,
+                Err(e) => panic!("{:?}",e)
+            };
+            for row in app.get_data() {
+                // Add header to file
+                wtr.serialize(row)?;
+            }
+            wtr.flush()?;
+        },
+        Err(e) => panic!("{:?}",e)
+    };
+    Ok(())
+}
 #[cfg(test)]
 mod tests {
     use super::*;

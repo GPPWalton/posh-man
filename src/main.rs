@@ -13,9 +13,9 @@ mod ui;
 mod event_handlers;
 fn new_file(file_path: Option<&str>, headers: [&str; 11])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
-    //TODO: remove unwraps
+    //TODO: remove unwraps?
     let file = File::create(file_path.unwrap())?;
-   let mut wtr = csv::Writer::from_path(file_path.unwrap())?;
+    let mut wtr = csv::Writer::from_path(file_path.unwrap())?;
     // Add header to file
     wtr.write_record(headers)?;
 
@@ -27,7 +27,7 @@ fn read_file(headers: [&str; 11])-> Result<Vec<Project>, Box<dyn Error>>{
     let filepath= OsString::from("project_priorities.csv");
 
     //if file does not exist, make a new one!
-    //TODO: remove unwraps
+    //TODO: remove unwraps?
     let file = File::open(&filepath).unwrap_or_else(|error| {
         if error.kind() == ErrorKind::NotFound {
             new_file(filepath.to_str(),headers).unwrap()
@@ -70,6 +70,7 @@ fn get_first_arg(headers: [&str; 11]) -> Result<(), Box<dyn Error>> {
 }
 
 fn main(){
+    //TODO: maybe make this a constant instead?
     let headers = ["Project","Size","Cost","Whole Army / Warband",
     "Assembly Required","Kitbash Rating","Painting Level","Complexity Rating",
     "Priority","Status","Is Owned"];

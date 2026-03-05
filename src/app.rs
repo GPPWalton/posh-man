@@ -42,8 +42,6 @@ pub enum CurrentScreen {
 }
 
 #[derive(EnumIter, Clone,PartialEq)]
-
-//TODO: remove datatype from this enum as tried and failed to implement it this way
 pub enum CurrentlyEditing {
     Project,
     Size,
@@ -119,8 +117,6 @@ impl App {
             max_width(items, |x| x.status().to_string()),
             max_width(items, |x| x.is_owned().to_string()),
         ]
-
-    
     }
 
     pub fn get_selected_index(&mut self) -> usize{
