@@ -9,10 +9,10 @@ pub const PALETTES: [tailwind::Palette; 2] = [
 ];
 pub const ITEM_HEIGHT: usize = 4;
 pub mod main_ui;
-pub mod editing_ui;
+pub mod input_ui;
 
 pub use main_ui::*;
-pub use editing_ui::*;
+pub use input_ui::*;
 
 fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
     // Cut the given rectangle into three vertical pieces

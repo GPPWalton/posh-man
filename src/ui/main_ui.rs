@@ -10,7 +10,7 @@ const CELL_PADDING: u16 = 1;
 const HEADER_WRAP_LIMIT: u16 = 10;
 const INFO_TEXT: [&str; 2] = [
     "<Esc> quit | <↑> move up | <↓> move down",
-    "<Enter> select",
+    "<Enter> edit | <n> create new entry",
 ];
 #[derive(Debug, Default)]
 pub struct TableColours {

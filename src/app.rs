@@ -5,8 +5,8 @@ use ratatui::{
     DefaultTerminal ,widgets::{ScrollbarState, TableState}
 };
 use unicode_width::UnicodeWidthStr;
-use crate::{event_handlers::{handle_editing_key_event, handle_main_key_event,handle_events},
-    ui::{PALETTES, TableColours, main_ui::render_main_ui, render_editing_ui,}
+use crate::{event_handlers::{handle_input_key_event, handle_main_key_event,handle_events},
+    ui::{PALETTES, TableColours, main_ui::render_main_ui, render_input_ui,}
 };
 
 use strum_macros::EnumIter;
@@ -91,10 +91,9 @@ impl App {
     pub fn run(&mut self, terminal: &mut DefaultTerminal, headers: [&str;11]) -> io::Result<()> {
         while !self.exit {
             match self.get_current_screen() {
-                CurrentScreen::Adding => todo!(),
-                CurrentScreen::Editing => {
-                    terminal.draw(|frame| render_editing_ui(frame, self))?;
-                    handle_events(self,handle_editing_key_event)?;
+                CurrentScreen::Editing | CurrentScreen::Adding => {
+                    terminal.draw(|frame| render_input_ui(frame, self))?;
+                    handle_events(self,handle_input_key_event)?;
                 },
                 CurrentScreen::Main => {
                     terminal.draw(|frame| render_main_ui(frame, self,headers))?;
