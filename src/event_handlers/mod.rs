@@ -2,10 +2,10 @@
 use crossterm::event::{self, Event as crossEvent, KeyCode, KeyEvent, KeyEventKind};
 use std::io;
 pub mod main_handlers;
-pub mod editing_handlers;
+pub mod input_handlers;
 
 pub use main_handlers::*;
-pub use editing_handlers::*;
+pub use input_handlers::*;
 
 use crate::app::{App};
 use crate::ui::{PALETTES, ITEM_HEIGHT};

@@ -6,6 +6,7 @@ pub fn handle_main_key_event( app: &mut App, key_event: KeyEvent) {
         KeyCode::Up => move_up(app),
         KeyCode::Down => move_down(app),
         KeyCode::Enter => select_entry(app),
+        KeyCode::Char('n') => add_new_entry(app),
         _ => {}
     }
 }
@@ -60,6 +61,17 @@ fn select_entry(app: &mut App){
 
     //load record into input for editing
     app.set_input_array(app.get_data()[selected_index].as_str_array());
+    app.set_currently_editing(Some(CurrentlyEditing::Project));
+}
+
+//add function to create a new record, works similarly to select_entry, but uses a different 'screen'
+fn add_new_entry (app: &mut App){
+    //change colour of the selected row
+    app.set_colour_index((app.get_colour_index() + 1) % PALETTES.len());
+    //switch current screen to adding
+    app.set_current_screen(CurrentScreen::Adding);
+
+    //set a blank project
     app.set_currently_editing(Some(CurrentlyEditing::Project));
 }
 
