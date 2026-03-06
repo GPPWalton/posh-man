@@ -13,7 +13,7 @@ pub fn handle_main_key_event( app: &mut App, key_event: KeyEvent) {
 }
 
 fn exit(app: &mut App) {
-    let _test = save_data(app, "test_priorities.csv".to_string());
+    let _test = save_data(app, "project_priorities.csv".to_string());
     app.set_exit(true);
     app.set_current_screen(CurrentScreen::Main);
 }
