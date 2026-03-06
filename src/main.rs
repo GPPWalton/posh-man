@@ -11,6 +11,9 @@ mod app;
 use crate::app::App;
 mod ui;
 mod event_handlers;
+#[cfg(test)]
+mod test_helper;
+
 fn new_file(file_path: Option<&str>, headers: [&str; 11])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
     //TODO: remove unwraps?

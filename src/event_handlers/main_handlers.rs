@@ -95,50 +95,34 @@ fn save_data(app: &mut App, file_path: String)-> Result<(), Box<dyn std::error::
     Ok(())
 }
 #[cfg(test)]
-mod tests {
+mod tests{
     use super::*;
-    use project::project::{Cost,PaintLevel,Project};
+    use crate::test_helper::generate_test_table;
     #[test]
     fn up_test() {
-        let mut test_projects = vec![];
 
-        for i in 0..29 {
-            test_projects.push(Project::new(String::from("Dangle No. ".to_owned() + &i.to_string() ), 1,Cost::None,true,false,4,PaintLevel::Character,1.0f64,1.0f64,false,true));
-        }
-        let test_len = &test_projects.len()-1;
-        let mut test_app = App::new(test_projects);
+        let  (mut test_app, test_len) = generate_test_table();
         for i in 2..0 {
             move_up(&mut test_app);
             if i != 0{
-                //TODO: remove unwrap
                 assert_eq!(i -1, test_app.get_mut_table_state().selected().unwrap())
             }
             else {
-                //TODO: remove unwrap
                 assert_eq!(test_len, test_app.get_mut_table_state().selected().unwrap())
             }
         }
     }
     #[test]
     fn down_test() {
-        let mut test_projects = vec![];
-
-        for i in 0..29 {
-            test_projects.push(Project::new(String::from("Dangle No. ".to_owned() + &i.to_string() ), 1,Cost::None,true,false,4,PaintLevel::Character,1.0f64,1.0f64,false,true));
-        }
-        let test_len = &test_projects.len()-1;
-        let mut test_app = App::new(test_projects);
+        let  (mut test_app, test_len) = generate_test_table();
         for i in 2..0 {
             move_down(&mut test_app);
             if i != test_len{
-                //TODO: remove unwrap
                 assert_eq!(i+1, test_app.get_mut_table_state().selected().unwrap())
             }
             else {
-                //TODO: remove unwrap
                 assert_eq!(0, test_app.get_mut_table_state().selected().unwrap())
             }
         }
     }
-   
 }
