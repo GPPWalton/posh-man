@@ -38,7 +38,7 @@ pub enum CurrentScreen {
     Main,       //main table
     Editing,    //when editing entry
     Adding,     //when adding entry
-    Exiting,    //confirmation of edit or add
+    Exiting,    //TODO: confirmation of edit or add
 }
 
 #[derive(EnumIter, Clone,PartialEq)]
@@ -129,7 +129,6 @@ impl App {
     //getters
     pub fn get_table_state(&self) -> &TableState {&self.table_state}
     pub fn get_data(&self) -> &Vec<Project> {&self.data}
-    pub fn get_exit(&self) -> bool {self.exit}
     pub fn get_longest_item_lens(&self) -> &[u16; 11] {&self.longest_item_lens}
     pub fn get_scroll_state(&self) -> &ScrollbarState {&self.scroll_state}
     pub fn get_colours(&self) -> &TableColours {&self.colours}
@@ -146,7 +145,6 @@ impl App {
     pub fn get_mut_input_array(&mut self) -> &mut [String;11] {&mut self.input_array}
 
     //setters
-    pub fn set_table_state(&mut self, table_state: TableState) {self.table_state = table_state;}
     pub fn set_longest_item_lens(&mut self, longest_item_lens: [u16; 11]) {self.longest_item_lens = longest_item_lens;}
     pub fn set_scroll_state(&mut self, scroll_state: ScrollbarState) {self.scroll_state = scroll_state;}
     pub fn set_exit(&mut self, exit: bool) {self.exit = exit;}
