@@ -8,7 +8,7 @@ Rust-based TUI I built to learn Rust! you can use it for logging and prioritisin
 
 Good news, PoSh Man will generate an empty file if you don't have one it the same directory, or if you don't specify one! For reference accepts a CSV file with the following headers:
 
-**project_name,size,cost,whole_army,needs_assembly,kitbash_rating,paint_level,complexity_rating,priority,status,is_owned**
+>project_name,size,cost,whole_army,needs_assembly,kitbash_rating,paint_level,complexity_rating,priority,status,is_owned
 
 The plus side of this is that if you decide to behave like a normal person and use spreadsheet software, the files PoSh Man generates should be compatible.
 
@@ -28,6 +28,6 @@ Creates empty PoSh table
 
 > cargo run add "<data_record in string format>"
 
-- **Add new entry**
-- **Edit existing entries**
+- ~~Add new entry~~
+- ~~edit existing entries~~
 - **Sort entries by priorty, then later by attribute**
