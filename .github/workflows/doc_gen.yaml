@@ -6,11 +6,14 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   
     steps:
       - uses: actions/checkout@v3
       - uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+      - run: sudo apt-get update && sudo apt-get install -y libx11-dev libxi-dev libxtst-dev
       - run: cargo doc --no-default-features
       - run: |
           echo "<meta http-equiv='refresh' content='0; url=posh_man/index.html'>" > target/docs/posh_man/index.html
