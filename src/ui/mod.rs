@@ -3,17 +3,23 @@ use ratatui::{style::{palette::tailwind},
      layout::{Direction,Constraint,Layout,Rect}
 };
 
+/// Contains the colour palletes used by the UI modules.
 pub const PALETTES: [tailwind::Palette; 2] = [
     tailwind::BLUE,
     tailwind::EMERALD,
 ];
+/// The height of rows/cells in the table.
 pub const ITEM_HEIGHT: usize = 4;
+
+/// Describes the layout and components in the Main page.
 pub mod main_ui;
+/// Describes the layout and components in the Input.
 pub mod input_ui;
 
 pub use main_ui::*;
 pub use input_ui::*;
 
+/// Helper function that accepts proportions of x and y and returns a subset of the original Rect.
 fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
     // Cut the given rectangle into three vertical pieces
     let popup_layout = Layout::default()
@@ -36,6 +42,7 @@ fn centered_rect(percent_x: u16, percent_y: u16, r: Rect) -> Rect {
         .split(popup_layout[1])[1] // Return the middle chunk
 }
 
+/// Helper function that wraps cell content when the content hits a word limit.
 fn process_cell_content<'a> (content: String, limit: u16) -> Text<'a>{
     //find how many lines
     let isolated_words: Vec<&str> = content.split_whitespace().collect();

@@ -3,12 +3,12 @@
     use crate::app::{CurrentScreen, CurrentlyEditing};
     use strum::{IntoEnumIterator};
 
-    //enum to represent direction user moves through attributes when editing
+    /// enum that represents the direction the user moves through attributes when editing.
     enum StepDirection {
         Left,
         Right
     }
-    //TODO: implement event_handling for editing pop-up
+    /// Handles key events for navigating and manipulating the Input page.
     pub fn handle_input_key_event( app: &mut App, key_event: KeyEvent){
         match key_event.code {
             KeyCode::Esc => close_popup(app),
@@ -23,6 +23,7 @@
             _ =>{}
         }
     }
+    /// Move left or right one step to the next attribute of the selected project
     fn move_to(direction: StepDirection,app: &mut App){
         if let Some(edit_mode) = &app.get_currently_editing() {
             //convert enum into vector
@@ -45,6 +46,7 @@
         }
     }
 
+    /// Delete last character in input field.
     fn delete_char(app: &mut App){
         if let Some(editing) = &mut app.get_mut_currently_editing() {
             match editing {
@@ -63,6 +65,7 @@
         }
     }
     
+    /// Insert character at the end of the input field.
     fn insert_char(value: char, app: &mut App) {
         // Step 1: Get the current editing state (mutable borrow starts and ends here)
         if let Some(editing) = app.get_mut_currently_editing() {
@@ -82,6 +85,8 @@
         }
         
     }
+
+    /// close the input page.
     fn close_popup(app: &mut App){
         match app.get_current_screen() {
             CurrentScreen::Adding => {
@@ -96,6 +101,8 @@
         //change colour of selected row back to 'unselected' colour
         app.set_colour_index((app.get_colour_index() + 1) % PALETTES.len());
     }
+
+    /// Close the input page and save the input to a new record in the project table.
     fn confirm(app: &mut App){
         //save input to new record
         save_input(app);
@@ -104,6 +111,8 @@
         close_popup(app);
         app.set_currently_editing(None);
     }
+
+    /// Take the input data and store it as a new element in the data vector (`Vec<Project>`).
     fn save_input (app: &mut App) {
         //add new project to data vector based on input array
         let new_record = match Project::from_arr(app.get_input_array()) {

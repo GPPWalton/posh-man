@@ -11,7 +11,7 @@ use crate::{event_handlers::{handle_input_key_event, handle_main_key_event,handl
 
 use strum_macros::EnumIter;
 
-
+/// Helper function for determining max width of a column
 fn max_width<F, T>(items: &[Project], field_fn: F) -> u16 where F: Fn(&Project) -> T, T: ToString,{
     items
         .iter()
@@ -21,6 +21,8 @@ fn max_width<F, T>(items: &[Project], field_fn: F) -> u16 where F: Fn(&Project) 
         //TODO: Eliminate this unwrap_or?
         .unwrap_or(0) as u16
 }
+
+/// Contains the application state data.
 pub struct App {
     table_state: TableState,
     data: Vec<Project>,
@@ -34,6 +36,7 @@ pub struct App {
     input_array : [String; 11]
 }
 
+/// Represents the different pages of the program.
 pub enum CurrentScreen {
     Main,       //main table
     Editing,    //when editing entry
@@ -42,6 +45,7 @@ pub enum CurrentScreen {
 }
 
 #[derive(EnumIter, Clone,PartialEq)]
+/// Represents which attribute of `Project` is currently being edited.
 pub enum CurrentlyEditing {
     Project,
     Size,
@@ -57,7 +61,7 @@ pub enum CurrentlyEditing {
 }
 
 impl App {
-    //constructor
+    /// initialises new `App` using a `Vector<Project>` variable.
     pub fn new(data: Vec<Project>) -> App {
         App {
             table_state: TableState::default(),
@@ -85,7 +89,7 @@ impl App {
         }
     }
 
-    /// runs the application's main loop until the user quits
+    /// Runs the application's main loop until the user quits
     pub fn run(&mut self, terminal: &mut DefaultTerminal, headers: [&str;11]) -> io::Result<()> {
         while !self.exit {
             match self.get_current_screen() {
@@ -102,6 +106,7 @@ impl App {
         Ok(())
     }
 
+    /// Get the constraints for each column based on the project data
     fn get_constraints(items: &Vec<Project>) -> [u16;11] {
         //find out mac unicode width of each column, or the header if the header is longer
         [
@@ -119,6 +124,7 @@ impl App {
         ]
     }
 
+    /// Returning the selected index of TableState if it exists
     pub fn get_selected_index(&mut self) -> usize{
         match self.get_mut_table_state().selected() {
         Some(i) => return i,
@@ -126,8 +132,8 @@ impl App {
     };
     }
 
-    //getters
-    pub fn get_table_state(&self) -> &TableState {&self.table_state}
+    
+    pub fn get_table_state(&self) -> &TableState {&self.table_state}        
     pub fn get_data(&self) -> &Vec<Project> {&self.data}
     pub fn get_longest_item_lens(&self) -> &[u16; 11] {&self.longest_item_lens}
     pub fn get_scroll_state(&self) -> &ScrollbarState {&self.scroll_state}
@@ -145,7 +151,6 @@ impl App {
     pub fn get_mut_input_array(&mut self) -> &mut [String;11] {&mut self.input_array}
 
     //setters
-    pub fn set_longest_item_lens(&mut self, longest_item_lens: [u16; 11]) {self.longest_item_lens = longest_item_lens;}
     pub fn set_scroll_state(&mut self, scroll_state: ScrollbarState) {self.scroll_state = scroll_state;}
     pub fn set_exit(&mut self, exit: bool) {self.exit = exit;}
     pub fn set_colours(&mut self, colours: TableColours) {self.colours = colours;}

@@ -1,6 +1,7 @@
 use std::fs::File;
 use crate::{app::{CurrentScreen, CurrentlyEditing}, event_handlers::*};
 
+/// Handles key events for navigating through and manipulating the project table.
 pub fn handle_main_key_event( app: &mut App, key_event: KeyEvent) {
     match key_event.code {
         KeyCode::Esc => exit(app),
@@ -12,12 +13,14 @@ pub fn handle_main_key_event( app: &mut App, key_event: KeyEvent) {
     }
 }
 
+/// Exits the program, cuttently saves changes on exit.
 fn exit(app: &mut App) {
     let _test = save_data(app, "project_priorities.csv".to_string());
     app.set_exit(true);
     app.set_current_screen(CurrentScreen::Main);
 }
 
+/// Move upwards once on the table.
 fn move_up(app: &mut App){
     //wrap around to bottom
     let i = match app.get_table_state().selected() {
@@ -36,6 +39,7 @@ fn move_up(app: &mut App){
     app.set_scroll_state(app.get_scroll_state().position(i * ITEM_HEIGHT));
 }
 
+/// Move downwards once on the table.
 fn move_down(app: &mut App){
     //wrap around to top  
     let i = match app.get_table_state().selected() {
@@ -53,6 +57,7 @@ fn move_down(app: &mut App){
     app.set_scroll_state(app.get_scroll_state().position(i * ITEM_HEIGHT));
     }
 
+/// Edit the currently selected entry.
 fn select_entry(app: &mut App){
     //change colour of the selected row
     app.set_colour_index((app.get_colour_index() + 1) % PALETTES.len());
@@ -65,7 +70,7 @@ fn select_entry(app: &mut App){
     app.set_currently_editing(Some(CurrentlyEditing::Project));
 }
 
-//add function to create a new record, works similarly to select_entry, but uses a different 'screen'
+/// Add a new entry to the project table.
 fn add_new_entry (app: &mut App){
     //change colour of the selected row
     app.set_colour_index((app.get_colour_index() + 1) % PALETTES.len());
@@ -77,6 +82,8 @@ fn add_new_entry (app: &mut App){
 }
 
 //TODO: handle ? shortcut so I don't need to return a result
+
+/// Saves the `Vec<Project>` that stores the data back to the CSV file.
 fn save_data(app: &mut App, file_path: String)-> Result<(), Box<dyn std::error::Error>>{
     match File::create(&file_path){
         Ok(_)=>{

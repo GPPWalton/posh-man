@@ -11,6 +11,8 @@ mod app;
 use crate::app::App;
 mod ui;
 mod event_handlers;
+
+/// Generates a new csv file.
 fn new_file(file_path: Option<&str>, headers: [&str; 11])-> Result<File, Box<dyn Error>>{
     //create a File using file_path
     //TODO: remove unwraps?
@@ -23,6 +25,7 @@ fn new_file(file_path: Option<&str>, headers: [&str; 11])-> Result<File, Box<dyn
     Ok(file)
 }
 
+/// Reads project_priorities.csv file, deserialising it into a Project struct via serde. 
 fn read_file(headers: [&str; 11])-> Result<Vec<Project>, Box<dyn Error>>{
     let filepath= OsString::from("project_priorities.csv");
 
@@ -45,12 +48,13 @@ fn read_file(headers: [&str; 11])-> Result<Vec<Project>, Box<dyn Error>>{
     }
     Ok(project_list)
 }
-
+/// **Deprecated** - Add new project
 fn add_project() -> Result<(), Box<dyn Error>> {
     //TODO: add record to project_priorities.csv
     todo!();
 }
 
+/// Retrieves command-line arguments and runs the program
 fn get_first_arg(headers: [&str; 11]) -> Result<(), Box<dyn Error>> {
     //maybe change to accept different arguments, display to show project priorities table,
     match env::args_os().nth(1) {
@@ -69,6 +73,7 @@ fn get_first_arg(headers: [&str; 11]) -> Result<(), Box<dyn Error>> {
     }
 }
 
+#[doc(hidden)]
 fn main(){
     //TODO: maybe make this a constant instead?
     let headers = ["Project","Size","Cost","Whole Army / Warband",

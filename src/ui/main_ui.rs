@@ -13,6 +13,7 @@ const INFO_TEXT: [&str; 2] = [
     "<Enter> edit | <n> create new entry",
 ];
 #[derive(Debug, Default)]
+/// Struct that contains colours of the project table
 pub struct TableColours {
     buffer_bg: Color,
     header_bg: Color,
@@ -27,7 +28,8 @@ pub struct TableColours {
 }
 
 impl TableColours {
-     pub const fn new(colour: &tailwind::Palette) -> Self {
+    /// Creates a new TableColours struct based on colour parameter
+    pub const fn new(colour: &tailwind::Palette) -> Self {
         Self {
             buffer_bg: tailwind::SLATE.c950,
             header_bg: colour.c900,
@@ -43,6 +45,7 @@ impl TableColours {
     }
 }
 
+/// Renders the main page UI
 pub fn render_main_ui(frame: &mut Frame, app: &mut App, headers: [&str;11]){
     let main_layout = &Layout::vertical([Constraint::Min(5), Constraint::Length(4)]);
     let rects = main_layout.split(frame.area());
@@ -54,10 +57,12 @@ pub fn render_main_ui(frame: &mut Frame, app: &mut App, headers: [&str;11]){
     render_footer(app,frame, rects[1]);
 }
 
+//TODO: delete this and move the contents from line 62 to 53
 fn set_colours(app: &mut App) {
     app.set_colours(TableColours::new(&PALETTES[app.get_colour_index()]));
 }
 
+/// Renders the project table
 fn render_table(app: &mut App, frame: &mut Frame, area: Rect,headers: [&str;11]) {
     let header_style = Style::default()
         .fg(app.get_colours().header_fg)
@@ -123,6 +128,7 @@ fn render_table(app: &mut App, frame: &mut Frame, area: Rect,headers: [&str;11])
     frame.render_stateful_widget(t, area, app.get_mut_table_state());
 }
 
+/// Renders the scrollbar component
 fn render_scrollbar(app: &mut App, frame: &mut Frame, area: Rect) {
     frame.render_stateful_widget(
         Scrollbar::default()
@@ -137,6 +143,7 @@ fn render_scrollbar(app: &mut App, frame: &mut Frame, area: Rect) {
     );
 }
 
+/// Renders the Footer component
 fn render_footer(app: &mut App, frame: &mut Frame, area: Rect) {       
     let info_footer = Paragraph::new(Text::from_iter(INFO_TEXT))
         .style(

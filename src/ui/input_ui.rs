@@ -9,6 +9,7 @@ const INFO_TEXT: [&str; 2] = [
 ];
 const INPUT_WIDTH: u16 = 15;
 
+/// Renders the UI for the input page
 pub fn render_input_ui(frame: &mut Frame, app: &mut App) {
     if let Some(editing) = &app.get_currently_editing() {
         let title_text = match app.get_current_screen() {
