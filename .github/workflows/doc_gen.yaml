@@ -15,8 +15,6 @@ jobs:
           toolchain: stable
       - run: sudo apt-get update && sudo apt-get install -y libx11-dev libxi-dev libxtst-dev
       - run: cargo doc --no-default-features
-      - run: |
-          echo "<meta http-equiv='refresh' content='0; url=posh_man/index.html'>" > target/docs/posh_man/index.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: target/docs/posh_man
