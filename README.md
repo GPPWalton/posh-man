@@ -57,3 +57,6 @@ Creates empty PoSh table
 - ~~edit existing entries~~
 - **Add unit tests <- in progress**
 - **Sort entries by priorty, then later by attribute**
+
+## Documentation
+There is now documentation, generated using rustdoc! you can find it [Here](https://gppwalton.github.io/posh-man/posh_man/).
