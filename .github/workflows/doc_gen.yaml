@@ -18,8 +18,12 @@ jobs:
         with:
           command: doc
           args: --no-default-features
-      - run: cargo doc --no-default-features
+      - name: Stage docs for deployment
+        run: |
+          mkdir -p _site/static.files
+          cp -r target/doc/posh_man _site/
+          cp -r target/doc/static.files _site/
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: target/docs/posh_man
-      - uses: actions/deploy-pages@v4   
+          path: _site
+      - uses: actions/deploy-pages@v4
